@@ -20,7 +20,7 @@ public with sharing class CrewSizeBackfillBatch implements Database.Batchable<SO
     }
     update installations;
   }
-
+@SuppressWarnings('PMD.AvoidDebugStatements')
   public void finish(Database.BatchableContext context) {
     System.debug(LoggingLevel.INFO, 'Crew size backfill finished');
   }
