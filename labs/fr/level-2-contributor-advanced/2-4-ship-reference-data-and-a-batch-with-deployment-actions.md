@@ -5,8 +5,11 @@ description: "Un déploiement vert n'est pas une fonctionnalité qui marche. Liv
 level: 2
 lab: 4
 lang: fr
-source_rev: "2ff4d0faf3b366e9e689becf0b6dbf7374ab9d8b"
+source_rev: "65a2f5f1c44fe41fecb7de63d46f0f775333058a"
 screenshots:
+  - annotated/vscode/sidebar-commands-custom-menu-2--lab-records
+  - annotated/salesforce/crew-capacity-records
+  - annotated/vscode/editor-crew-capacity-csv
   - annotated/web/github-pr-deployment-actions
   - annotated/vscode/pipeline-cards--new-user-story
   - annotated/vscode/data-workbench
@@ -71,28 +74,65 @@ Dans `helios-dev`, créez :
   - `Crew_Type__c`, Picklist : `Roof`, `Ground`, `Electrical`
   - `Roof_Type__c`, Picklist : `Tile`, `Slate`, `Flat`, `Metal`
   - `Panels_Per_Day__c`, Number 3,0
+- Un onglet pour lui, pour retrouver les enregistrements dans l'application : **Setup > Tabs**,
+  **New** sous **Custom Object Tabs**, objet **Crew Capacity**, n'importe quel style d'onglet. Gardez
+  la visibilité par profil que propose l'assistant. Sur le dernier écran, **Add to Custom Apps**,
+  décochez **Include Tab** en haut de la liste, puis cochez **Helios Delivery** seule : les autres
+  applications n'en ont pas l'usage
 - Une classe Apex `CrewCapacityBatch` qui recalcule `Total_Capacity_kW__c` sur les installations
   planifiées et que Salesforce peut lancer selon une planification, plus sa classe de test
   `CrewCapacityBatchTest`. **Vous n'avez pas à les écrire.** Copiez-les depuis
   `scripts/apex/samples/` du repository : ce qu'elles calculent importe bien moins ici que le fait que
   quelqu'un doive les planifier dans chaque org, ce qui est tout l'objet du lab
-- Les accès, sur **Helios Delivery Manager** : **Read**, **Create** et **Edit** sur Crew Capacity, et
-  **Read** et **Edit** sur ses quatre champs. Les planificateurs entretiennent ces nombres, et c'est
-  aussi le permission set que porte l'utilisateur de la pipeline dans chaque org : sans lui, le
-  chargement de données de l'étape 4 trouverait des champs qu'il n'a pas le droit d'écrire
+- Les accès, sur **Helios Delivery Manager** : **Read**, **Create** et **Edit** sur Crew Capacity,
+  **Read** et **Edit** sur ses quatre champs, et sous **Tab Settings** sur la même page, **Available**
+  et **Visible**. Les planificateurs entretiennent ces nombres, et c'est aussi le permission set que
+  porte l'utilisateur de la pipeline dans chaque org : sans lui, le chargement de données de
+  l'étape 4 trouverait des champs qu'il n'a pas le droit d'écrire. Le réglage d'onglet est ce qui
+  affiche l'onglet dans les autres orgs, là où la visibilité par profil gardée dans l'assistant ne
+  voyage jamais
 
-Créez ensuite 12 enregistrements Crew Capacity dans votre org, un par combinaison de type d'équipe et
-de type de toiture qu'Helios prend en charge.
+Puis les enregistrements. Helios prend en charge 12 combinaisons, trois types d'équipe par quatre
+types de toiture, et chacune a besoin d'un enregistrement Crew Capacity qui dit combien de panneaux
+par jour cette équipe pose sur cette toiture. Saisir douze enregistrements n'apprend rien de ce dont
+parle ce lab, alors le menu Training les crée : **Training: Level 2** **(1)** > **Create my lab
+records** **(2)**, choisissez **Lab 2.4 - the 12 Crew Capacity records**, puis **helios-dev**, et
+répondez **Yes** à **Create them?**.
+
+![Le menu Training du Niveau 2, avec Create my lab records](../../_assets/annotated/vscode/sidebar-commands-custom-menu-2--lab-records.png)
+
+Le panneau vérifie d'abord que votre objet et ses quatre champs sont dans l'org, puis crée les
+enregistrements, les liste, et termine par un lien **See them in the org**. Ouvrez-le, ou ouvrez
+l'onglet **Crew Capacity** de l'application Helios Delivery et choisissez la vue de liste **All** :
+elle indique **12 items** **(1)**, de `CAP-ROOF-TILE` à `CAP-ELECTRICAL-METAL`.
+Si le panneau dit qu'un champ manque, terminez d'abord l'objet, puis relancez-le : il met à jour les
+mêmes douze enregistrements au lieu d'en créer d'autres.
+
+![La liste All de Crew Capacity dans helios-dev, avec ses 12 enregistrements](../../_assets/annotated/salesforce/crew-capacity-records.png)
+
+<details markdown="1"><summary>Sous le capot : comment les enregistrements ont été créés</summary>
+
+L'entrée du menu a lancé :
+
+    node scripts/training.mjs records
+
+qui a chargé `scripts/lab-records/lab-2-4/Crew_Capacity__c.csv` dans `helios-dev` avec
+`sf data upsert bulk`, en rapprochant sur `External_Id__c`, et a ajouté une vue de liste **All** à
+l'objet s'il n'en avait pas, pour que le lien ait une liste à ouvrir. Sur un vrai projet, quelqu'un saisit ces
+enregistrements dans l'org, ou les charge depuis un tableur : dans les deux cas ils n'existent que
+dans une org, et c'est le problème que la suite de ce lab résout.
+
+</details>
 
 ### 2. Publier et regarder rien échouer
 
-Récupérez l'objet, ses champs, les deux classes Apex et `Helios_Delivery_Manager` avec
-**Commit changes**, commitez-les, puis **Save / Publish**, poussez, Pull Request. Le contrôle est
-vert. Mergez. Le déploiement est vert.
+Récupérez l'objet, ses champs, son onglet, l'application `Helios_Delivery`, les deux classes Apex et
+`Helios_Delivery_Manager` avec **Commit changes**, commitez-les, puis **Save / Publish**, poussez,
+Pull Request. Le contrôle est vert. Mergez. Le déploiement est vert.
 
 Ouvrez maintenant `helios-integration` et regardez :
 
-- `Crew_Capacity__c` existe, **avec zéro enregistrement**
+- L'onglet **Crew Capacity** est dans l'application Helios Delivery, **avec zéro enregistrement**
 - `CrewCapacityBatch` existe, **planifié nulle part**
 - Personne n'a vérifié que l'org a le droit d'envoyer l'e-mail de synthèse du batch
 
@@ -112,29 +152,44 @@ le projet porte déjà sont listés à gauche **(2)** : `HeliosBaseline` est cel
 Training pour alimenter votre org.
 
 Un workspace est un dossier de fichiers CSV plus la recette qui dit quel objet chacun remplit et
-comment. Il est exécuté par SFDMU, le chargeur de données qu'utilise sfdx-hardis, et rien dedans
-n'est propre à une org.
+comment. Il est exécuté par [SFDMU](https://github.com/forcedotcom/SFDX-Data-Move-Utility), le chargeur de
+données qu'utilise sfdx-hardis, et rien dedans n'est propre à une org.
 
 ![Le Data Import/Export Workbench, où les workspaces SFDMU se créent et se lancent](../../_assets/annotated/vscode/data-workbench.png)
 
-Créez un nouveau workspace nommé `HeliosCrewRefData` :
+La capture a été prise à la fin de cette étape : elle montre déjà `HeliosCrewRefData` sous
+`HeliosBaseline`. La vôtre ne montre que `HeliosBaseline` tant que vous ne l'avez pas créé.
 
-1. **Create Workspace**, et nommez-le `HeliosCrewRefData`
-2. Ajoutez l'objet `Crew_Capacity__c`
-3. Opération : **Upsert**
-4. Identifiant externe : `External_Id__c`
-5. Champs : les quatre que vous avez créés
+Créez un nouveau workspace :
+
+1. **Create Workspace** **(1)**, et remplissez ses trois champs :
+   - **Workspace Name** : `HeliosCrewRefData`, le nom de son dossier sous `scripts/data/`
+   - **Display Label** : `Crew capacity reference data`, le nom qu'affichent les panneaux, par
+     exemple quand vous choisissez ce workspace dans une action de déploiement à l'étape 4
+   - **Description** : `The 12 Crew Capacity records every org needs: panels a day per crew type and
+     roof type.`
+2. **Add Object**, et collez ceci dans **SOQL Query**. Elle nomme l'objet et les quatre champs que
+   vous avez créés :
+
+    ```sql
+    SELECT External_Id__c, Crew_Type__c, Roof_Type__c, Panels_Per_Day__c FROM Crew_Capacity__c
+    ```
+
+3. **Operation** : **Upsert**
+4. **External Id (for Upsert)** : `External_Id__c`
 
 Puis **Export data**. Il pose deux questions : s'il faut utiliser votre org par défaut, `helios-dev`,
 et si vous confirmez l'export. Oui aux deux. Le panneau tire vos 12 enregistrements dans
 `scripts/data/HeliosCrewRefData/Crew_Capacity__c.csv`.
 
-Ouvrez ce fichier et lisez-le. Douze lignes, une colonne par champ, chacune avec un identifiant
-externe stable, et une colonne `Id` en premier : les identifiants d'enregistrement de `helios-dev`,
+Ouvrez ce fichier **(1)** et lisez-le. Douze lignes, une colonne par champ, chacune avec un
+identifiant externe stable **(3)**, et une colonne `Id` en premier **(2)** : les identifiants d'enregistrement de `helios-dev`,
 qui ne veulent rien dire ailleurs et que l'import ignore, parce qu'il fait correspondre sur
 l'identifiant externe. Ce fichier est désormais versionné, relu et déployé comme n'importe quelle
 autre source. Les dossiers `logs`, `reports` et `target` que l'export a aussi écrits à côté sont
 ignorés par git : rien à commiter de ce côté.
+
+![Le Crew_Capacity__c.csv exporté, ouvert dans l'éditeur](../../_assets/annotated/vscode/editor-crew-capacity-csv.png)
 
 !!! tip "Pourquoi l'identifiant externe n'est pas facultatif"
     `Upsert` sur `External_Id__c` veut dire que lancer l'import deux fois met à jour les mêmes douze
@@ -230,6 +285,12 @@ rapport de déploiement**, de sorte que la personne qui livre en production est 
 livraison elle-même, qu'il y a un clic à faire. C'est la différence entre une étape manuelle qui est
 faite et une qui vit dans une page Confluence que personne n'ouvre.
 
+Écrivez-la donc pour quelqu'un qui n'a jamais vu votre story : chaque clic, dans l'ordre, avec les
+noms exacts à l'écran, et ce que la page montre une fois que c'est fait, comme les quatre lignes
+ci-dessus. Le release manager la fait dans une org que vous n'avez jamais ouverte, souvent le jour
+de la livraison. S'il doit deviner ce que vous vouliez, il devinera, et une mauvaise supposition en
+production est pire que pas d'étape du tout.
+
 ### 5. Lire le commentaire de la Pull Request
 
 L'éditeur a écrit les trois actions dans `scripts/actions/`, dans un fichier nommé d'après votre Pull
@@ -254,7 +315,8 @@ l'étape manuelle reste en attente jusqu'à ce qu'une personne dise qu'elle est 
 
 Ne vous contentez pas de la coche verte. **Ouvrez l'org et regardez :**
 
-- **Crew Capacity** a 12 enregistrements
+- L'onglet **Crew Capacity** de l'application Helios Delivery, sur sa vue de liste **All**, a 12
+  enregistrements
 - **Setup > Scheduled Jobs** liste `Helios crew capacity nightly`
 - L'étape manuelle est listée comme restant à faire, parce que vous ne l'avez pas faite
 
@@ -354,6 +416,12 @@ Documentation de la commande : [hardis:org:data:import](https://sfdx-hardis.clou
 - L'étape manuelle listée dans le rapport de déploiement, cochée par vous
 
 ## En cas de problème
+
+**L'onglet Crew Capacity manque dans l'application de `helios-integration`.**
+L'onglet ou l'application `Helios_Delivery` n'était pas dans votre Pull Request, ou l'onglet n'est
+pas **Visible** sous **Tab Settings** de `Helios_Delivery_Manager`. La visibilité par profil réglée
+dans l'assistant reste dans `helios-dev`. Corrigez-le là, récupérez l'élément manquant, et publiez à
+nouveau.
 
 **L'import de données échoue sur la sécurité au niveau des champs.**
 L'utilisateur de CI ne peut pas écrire les champs : l'autorisation de l'étape 1 manque dans

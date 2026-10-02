@@ -3,6 +3,34 @@
 What changed in the course, for learners and trainers. The course has no versions: each section is
 a day, newest first, and a change goes under the date of the day it is made.
 
+## 2026-09-30
+
+- **The course has a new address: <https://sfdx-hardis-training.github.io/>**, on its way to
+  sfdx-hardis-training.cloudity.com once the domain is in place. Every old link keeps working:
+  hardisgroupcom.github.io/sfdx-hardis-training now sends each page to the same page at the new
+  address, and still serves the badge records, the story records and the share cards themselves, so
+  a badge already claimed and a fork already made carry on as they are.
+- The language picker works on the new address. It held a link that only existed under the old one.
+- Lab 2.4 creates a Crew Capacity tab in the Helios Delivery app, so the records can be found in every org without typing a URL.
+
+## 2026-09-29
+
+- Lab 1.6 shows the counts a learner gets today, 36 sent and 7 changed, in its text and its two comment pictures.
+- Pictures that show a later state of the course now say so: the pipeline of Lab 1.6, the Data Workbench of Lab 2.4 and the Merge Changes list of Lab 2.7.
+- Lab 2.1 names the field the backpromote actually brings, Romain's Signed Off By.
+- Lab 3.2 says the fixed Pull Request moves two fields to the second column, and Lab 3.5 explains why its notes count 20 Pull Requests.
+- A badge claim now republishes the reset branches, so a retrofit in Labs 3.7 and 3.10 no longer brings badge files along.
+
+## 2026-09-27
+
+- Helios starts with the package-no-overwrite.xml every sfdx-hardis project gets, and Lab 3.5 adds the warehouse remote site setting to it.
+- Pull Request checks are faster: MegaLinter no longer runs checkov and grype on the course.
+- New **Create my lab records** entry in the Level 2 Training menu: Lab 2.4 no longer asks you to type the 12 Crew Capacity records, it creates them and you check them.
+- The Apex code analyzer now blocks a Pull Request, as on a real project: Lab 2.5 shows the query in a loop refused, and the Apex samples the labs copy no longer carry findings.
+- Lab 2.4 gives the SOQL query and the label to type when you create the data workspace, links SFDMU, and says how precise a manual action must be.
+- Lab 2.8 step 4 says there is nothing to click, and Lab 2.9 says how to create the checklist records by hand.
+- Clearer wording across the labs: retrieve, merge and bring back replace vaguer verbs, and the capstones ask for a GitHub star if you liked the course.
+
 ## 2026-09-26
 
 - After **Reset this level** on Level 2, **Set up one of my training orgs** and every Pull Request into integration no longer fail on the Signed Off By field, which the start state granted before US-017 created it.
