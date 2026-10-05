@@ -17,7 +17,7 @@ screenshots:
 depends_on:
   commands: [hardis:doc:release-notes, hardis:project:deploy:smart]
   flags: []
-  config: [mergeTargets, availableTargetBranches, packageNoOverwritePath]
+  config: [mergeTargets, availableTargetBranches, packageNoOverwritePath, failValidationOnPendingManualActions]
   panels: [pipeline, deploymentAction]
   docs: [salesforce-devops-deploy-major-branches, hardis/doc/salesforce-devops-release-notes]
 ---
@@ -192,6 +192,11 @@ The checklist is the exception, and it is not decoration. **Tick a box once you 
 in the org**, and the next sfdx-hardis job reads the box back and records the action as done. Leave
 it unticked and the next promotion will still be asking you for it.
 
+A **before** step also holds the merge: while the deliverability step of US-026 is not marked as
+done in `uat`, the check of the promotion stops red, right after its pre-deployment actions. Do the
+click in `helios-uat`, tick its box (or **Mark as done in uat** in the VS Code **Deployment
+Actions** tab), then **Re-run all jobs** on the check: it records the step and goes green.
+
 ### 5. Merge and watch the deployment
 
 Merge the promotion. The **Process Deployment (sfdx-hardis)** run starts, this time on `uat`.
@@ -199,10 +204,9 @@ Merge the promotion. The **Process Deployment (sfdx-hardis)** run starts, this t
 This is the first deployment to this org through the pipeline, so it will be larger than the ones to
 integration: UAT is behind by everything the team has done. Expect several minutes.
 
-The deliverability step is a **pre-deploy** one: its place is before the merge, as step 4 says.
-If you did it in `helios-uat` and ticked its box, the log of this job says so: *Manual action Set
-Email Deliverability to All Email has been confirmed as done in org branch uat*. If you did not,
-do it now and tick the box: the next job that carries this Pull Request records it.
+The deliverability step is a **pre-deploy** one: its place is before the merge, as step 4 says,
+and the check did not go green until you ticked it. This job skips it: *Skipping Set Email
+Deliverability to All Email ...: already run in uat*.
 
 Then read the log for the overwrite manager, above the deployment, among the lines that start
 with `[NoOverwrite]`:
@@ -235,7 +239,7 @@ Open the **DevOps Pipeline** panel and click the `uat` node, the same way you cl
 in step 1. In the footer of that window, the left button now reads **Generate Promotion Notes for
 uat**. Click it.
 
-This window has the checkbox column and the **Create promotion from uat (Beta)** button the note
+This window has the checkboxes and the **Create promotion from uat (Beta)** button the note
 above mentioned, because `uat` is the source of the one promotion step this project allows. Ignore
 both until [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md).
 
@@ -266,21 +270,21 @@ On this promotion, the generated notes open like this:
 
 | Metric           | Value |
 |------------------|-------|
-| Pull Requests    | 20    |
-| Tickets          | 15    |
+| Pull Requests    | 22    |
+| Tickets          | 16    |
 | Contributors     | 1     |
-| Added / Modified | 34    |
+| Added / Modified | 38    |
 ```
 
 The count includes the Pull Requests that carry no story: the configuration ones of [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) and
-of step 2, and the promotion itself. Yours depends on how you got here: close to 20 after walking
+of step 2, and the promotion itself. Yours depends on how you got here: a little over 20 after walking
 Levels 1 and 2, far fewer after **Reset this level**, which starts Level 3 without their Pull
 Requests.
 
 Then come a table of the tickets, one of the Pull Requests with their authors and merge dates, the
 metadata changed by type, and the deployment actions with their status in `uat`: the manual
-deliverability step **success** if you ticked its box before the merge and **manual** if not, the
-imports and the schedule **success**.
+deliverability step **success**, ticked before the merge, the imports and the schedule
+**success**.
 
 Read it and then improve it. Generated notes are a complete list, and a release note the business
 reads needs two things the generator cannot know:
@@ -348,6 +352,15 @@ Command documentation: [hardis:doc:release-notes](https://sfdx-hardis.cloudity.c
 - The release notes in the description of the promotion Pull Request
 
 ## If it goes wrong
+
+**The deployment job to uat is red on "Put the delivery managers in the Crew Leads group".**
+Your fork dates from before 2026-10-05, when Mariia's fix in [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) did not ship the Crew Leads public group
+yet: `helios-uat` has none, and her first action looks for it. The metadata is deployed, so do not
+deploy again. Recover it the way [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) taught: create the group in `helios-uat` (**Setup** >
+**Public Groups** > **New**, group name `Helios_Crew_Leads`), then in the **DevOps Pipeline** panel
+click `uat`, **Deployment Actions** tab, **Retry** on the failed action, and answer **Run all the
+next actions**. Create the same group in `helios-preprod` and `helios-prod` before their promotions
+in [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md).
 
 **The check fails with authentication errors for uat.**
 [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) for the `uat` branch: the secrets, and the pre-authorisation of the External Client App in
