@@ -3,7 +3,7 @@
   "version": 1,
   "course": {
     "name": "Salesforce DevOps with sfdx-hardis",
-    "site": "https://hardisgroupcom.github.io/sfdx-hardis-training",
+    "site": "https://sfdx-hardis-training.github.io",
     "upstreamRepo": "hardisgroupcom/sfdx-hardis-training",
     "docSite": "https://sfdx-hardis.cloudity.com",
     "trailheadOwner": "nvuillamy"
@@ -432,6 +432,24 @@
       "seededFailure": "A .forceignore wildcard added in the same Pull Request matches the new field, so no deployment sends it, and the layout and the permission set that use it are refused"
     },
     {
+      "id": "US-062",
+      "level": 3,
+      "lab": 3,
+      "author": "mariia",
+      "title": "Put the delivery managers in a Crew Leads group",
+      "story": "As a planner, I want every delivery manager in one Crew Leads group, so that I share the installation plans once instead of person by person.",
+      "acceptance": [
+        "A Crew Leads public group holding every delivery manager",
+        "The crew capacity recalculated once after the deployment"
+      ],
+      "branch": "training/mate-us-062-crew-leads",
+      "metadata": [
+        "scripts/apex/crew-leads-add-delivery-managers.apex",
+        "scripts/apex/crew-leads-add-deployment-user.apex"
+      ],
+      "seededFailure": "The Crew Leads group was created by hand in the dev org and never shipped, and the crew capacity action names a class that does not exist, so two post-deployment actions fail after the merge"
+    },
+    {
       "id": "US-057",
       "level": 3,
       "lab": 10,
@@ -633,7 +651,7 @@
         {
           "lab": 1,
           "slug": "2-1-backpromote-your-teammates-work",
-          "title": "Backpromote: catch your org up with the team",
+          "title": "Backpromote: catch your dev org up with the team",
           "description": "Your development org is behind integration. Bring in the stories your teammates merged with the sfdx-hardis Backpromote panel, keeping your own work.",
           "time": "15 min"
         },
@@ -662,7 +680,7 @@
           "lab": 5,
           "slug": "2-5-pass-code-quality-and-apex-test-coverage",
           "title": "Pass the code quality gate and Apex test coverage",
-          "description": "Fix a PMD warning and the Apex code coverage that block your Pull Request, and run the same checks from VS Code before you push.",
+          "description": "Fix a PMD finding and the Apex code coverage that block your Pull Request, and run the same checks from VS Code before you push.",
           "time": "30 min"
         },
         {
@@ -699,7 +717,7 @@
       "level": 3,
       "slug": "level-3-release-manager",
       "name": "Release Manager",
-      "duration": "about 7 h",
+      "duration": "about 7 h 20",
       "prerequisite": 2,
       "badge": "sfdx-hardis Release Manager",
       "star": "hardisgroupcom/vscode-sfdx-hardis",
@@ -722,8 +740,8 @@
           "lab": 3,
           "slug": "3-3-deploy-to-integration-and-read-the-log",
           "title": "Read the deployment log, and what .forceignore hides from it",
-          "description": "Read an sfdx-hardis deployment log properly, then review a Pull Request whose .forceignore wildcard keeps its own field out of every deployment.",
-          "time": "25 min"
+          "description": "Read an sfdx-hardis deployment log, find what a .forceignore wildcard hides, and recover post-deployment actions that failed after the merge.",
+          "time": "45 min"
         },
         {
           "lab": 4,

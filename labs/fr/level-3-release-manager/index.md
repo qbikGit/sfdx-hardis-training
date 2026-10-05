@@ -4,12 +4,12 @@ description: "Tenez une pipeline CI/CD Salesforce avec sfdx-hardis : environneme
 id: l3-home
 level: 3
 lang: fr
-source_rev: "e7208fdb3ddb4226315f5595365f110c93c132af"
+source_rev: "e1e8c48c227c1a01ce4aa9956321c3dc636307b7"
 ---
 
 # Niveau 3 - Release manager Salesforce DevOps
 
-**Durée** : environ 7 h.
+**Durée** : environ 7 h 20.
 
 **Prérequis** : le [Niveau 1](../level-1-contributor-basics/index.md) **et** le
 [Niveau 2](../level-2-contributor-advanced/index.md). Les deux sont obligatoires, et l'audit du
@@ -62,7 +62,7 @@ Elles sont dix, et les labs les appellent par ces noms :
 | **Set up one of my training orgs**    | Déploie l'application Helios et ses données dans une org que vous choisissez                          |
 | **Simulate my teammates**             | Crée les branches et Pull Requests de collègues dont un lab a besoin                                  |
 | **Publish my pipeline configuration** | Ouvre une Pull Request vers `integration` avec la configuration que vous avez modifiée                |
-| **Check my work**                     | Vérifie le lab que vous venez de terminer et affiche votre reçu                                       |
+| **Check my work**                     | Vérifie le lab que vous venez de terminer                                                             |
 | **Claim my badge**                    | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                             |
 | **Update my course**                  | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration` |
 | **Reset this level**                  | Remet votre repository au début du Niveau 3                                                           |
@@ -80,7 +80,7 @@ Les mêmes commandes sont dans la vue **SFDX HARDIS** de la barre de gauche, sou
 |-----------------------------------------------------------|----------------------------------------------------------------|--------|
 | [3.1](3-1-configure-the-pipeline-up-to-production.md)     | Configurer la pipeline CI/CD jusqu'à la production             | 75 min |
 | [3.2](3-2-review-a-contributor-pull-request.md)           | Relire et merger la Pull Request d'un contributeur             | 25 min |
-| [3.3](3-3-deploy-to-integration-and-read-the-log.md)      | Lire le log de déploiement, et ce que .forceignore lui cache   | 25 min |
+| [3.3](3-3-deploy-to-integration-and-read-the-log.md)      | Lire le log de déploiement, et ce que .forceignore lui cache   | 45 min |
 | [3.4](3-4-merge-colliding-pull-requests.md)               | Trois Pull Requests se percutent : choisir l'ordre de merge    | 35 min |
 | [3.5](3-5-promote-to-uat-and-write-release-notes.md)      | Promouvoir en UAT et écrire les notes de version               | 35 min |
 | [3.6](3-6-release-to-production-and-read-dora-metrics.md) | Livrer en production et lire vos métriques DORA                | 35 min |

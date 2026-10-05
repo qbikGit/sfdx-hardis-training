@@ -5,11 +5,11 @@ description: "Rendre un champ obligatoire se déploie au vert et casse les enreg
 level: 2
 lab: 3
 lang: fr
-source_rev: "a34ea6fe2995834d2ab32fd72793082b541c84c8"
+source_rev: "af0ed2794b7fc66b266d5280832d5a890ceda29f"
 screenshots:
   - annotated/vscode/pipeline-cards--my-pull-request
   - annotated/vscode/pipeline-cards--new-user-story
-  - annotated/vscode/pipeline-pr-actions-empty
+  - annotated/vscode/pipeline-workflow-cards
   - annotated/vscode/pipeline-edit-action-apex
   - annotated/vscode/pipeline-pr-actions-list
 depends_on:
@@ -70,7 +70,7 @@ Salesforce vous avertit au sujet des appels API et Apex, vous demande de **Confi
 l'enregistre. Pas un mot sur vos données, alors que la plupart des installations de votre org n'ont pas de
 crew size. Retenez-le : c'est tout ce lab.
 
-Faites descendre le champ avec **Commit changes** (le champ, rien d'autre), commitez-le, **Save /
+Faites un retrieve du champ avec **Commit changes** (le champ, rien d'autre), commitez-le, **Save /
 Publish**, poussez, et ouvrez la Pull Request.
 
 ### 2. Lire le premier échec
@@ -88,7 +88,7 @@ chaque entrée de sécurité au niveau du champ qui le mentionne devient invalid
 refuse les permission sets plutôt que le champ.
 
 La correction prend une minute, et l'org l'a déjà faite : dans `helios-dev` les entrées ont disparu
-des deux permission sets à l'instant où le champ est devenu obligatoire. Faites-les descendre :
+des deux permission sets à l'instant où le champ est devenu obligatoire. Faites-en un retrieve :
 **Commit changes**, cochez `Helios_Delivery_Crew` et `Helios_Delivery_Manager`, récupérez. Source
 Control montre chacun d'eux perdant son entrée `Crew_Size__c` et rien d'autre. Commitez, **Save /
 Publish** à nouveau. Le commentaire sfdx-hardis le disait même, sous chaque erreur, avec un lien vers
@@ -176,7 +176,7 @@ Dans le diagramme : activez **Show feature branches** en haut à droite, désact
 demandez pas, et votre propre branche apparaît à côté des branches majeures. Votre branche de feature
 **(1)**, et sur la flèche qui en part la pastille numérotée **(2)**. Cliquez sur la pastille.
 
-![Le panneau DevOps Pipeline, avec la branche de feature et la pastille de sa Pull Request](../../_assets/annotated/vscode/pipeline-pr-actions-empty.png)
+![Le panneau DevOps Pipeline, avec la branche de feature et la pastille de sa Pull Request](../../_assets/annotated/vscode/pipeline-workflow-cards.png)
 
 Ou faites défiler jusqu'à **Project Contribution Workflow** et cliquez sur la carte **My Pull
 Request** **(1)**, qui pointe toujours vers la Pull Request de la branche sur laquelle vous êtes.
@@ -210,7 +210,7 @@ sautée, pour que le relecteur la voie venir.
 
 **Save**. L'action rejoint la liste de l'onglet **Deployment Actions**, dont le compteur **(1)**
 augmente d'une unité. **Add New Action** **(2)** reste là pour la suivante, et votre ligne **(3)**
-porte une pastille **Post-Deploy** dans la colonne **WHEN**.
+porte une pastille **Post-Deploy** sous son libellé.
 
 ![L'onglet Deployment Actions de la Pull Request, listant les actions qu'elle porte](../../_assets/annotated/vscode/pipeline-pr-actions-list.png)
 
@@ -257,20 +257,22 @@ plus tard, chaque installation de `helios-integration` porte un crew size, et pe
 Setup.
 
 `helios-dev` a toujours ses crew sizes vides, et c'est normal : le prochain backpromote lance les
-actions des Pull Requests qu'il fait descendre, celle-ci comprise.
+actions des Pull Requests qu'il rapatrie, celle-ci comprise.
 
 <details markdown="1"><summary>Sous le capot : où l'action est stockée et comment elle tourne</summary>
 
 L'éditeur a écrit un fichier YAML nommé d'après votre Pull Request, sous `scripts/actions/` :
 
     commandsPostDeploy:
-      - id: backfill-crew-size
+      - id: 3f6d0a52-24b1-4c1a-9a0e-5b7f02400001
         label: Backfill Crew Size on existing installations
         type: apex
         parameters:
           apexScript: scripts/apex/backfill-crew-size.apex
         context: process-deployment-only
         runOnlyOnceByOrg: true
+
+L'`id` est celui que l'éditeur a généré en créant l'action : le vôtre est différent. Ne le changez jamais : c'est grâce à lui que sfdx-hardis sait dans quelles orgs l'action a déjà tourné.
 
 `sf hardis:project:deploy:smart` le lit, et autour du déploiement Salesforce il :
 

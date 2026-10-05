@@ -1,7 +1,7 @@
 ---
 id: lab-2-5
 title: "Lab 2.5 - Pass the code quality gate and Apex test coverage"
-description: "Fix a PMD warning and the Apex code coverage that block your Pull Request, and run the same checks from VS Code before you push."
+description: "Fix a PMD finding and the Apex code coverage that block your Pull Request, and run the same checks from VS Code before you push."
 level: 2
 lab: 5
 lang: en
@@ -37,13 +37,13 @@ An Apex change in `InstallationScheduler`. Two things will stop you, and neither
 metadata being wrong:
 
 1. **PMD**, the Apex code analyzer, run for you by MegaLinter, on a query inside a loop that you are
-   about to write by copying an existing pattern. It **warns**
-2. **Code coverage**, because the new branch of logic has no test. It **blocks**
+   about to write by copying an existing pattern. It **blocks** the merge
+2. **Code coverage**, because the new branch of logic has no test. It **blocks** too
 
-The first is this project's choice: it could make the analyzer refuse, and it does not. The second
-is this project's threshold too: 80% of the Apex in the org run by tests, above the 75% Salesforce
-itself requires. Knowing which of your gates warn and which refuse is half of working on a pipeline, so
-this lab makes you meet one of each.
+Both are this project's choices, and both are what real projects choose: the analyzer refuses code
+that breaks Salesforce limits, and the tests have to run 80% of the Apex in the org, above the 75%
+Salesforce itself requires. Each one tells you what is wrong in a different place, so this lab makes
+you meet them one after the other.
 
 !!! note "Admins, this lab is for you too"
     There is Apex in it, and you will not write a line of it: every block is copied from this page
@@ -105,16 +105,17 @@ This one is a file, not an org change, so there is nothing to retrieve: commit
 `InstallationScheduler.cls` from the **Source Control** panel, then **Save / Publish**, push, and
 open the Pull Request.
 
-### 3. MegaLinter warns you
+### 3. MegaLinter blocks you
 
 ```
 (Moderate)  pmd:OperationWithLimitsInLoop  force-app/main/default/classes/InstallationScheduler.cls
 Avoid operations in loops that may hit governor limits
 ```
 
-It is in the MegaLinter comment on your Pull Request, under **code-analyzer-apex**, among a few
-findings on code that was there before you. The deployment check next to it is green: the tests
-still run more than 80% of the org's Apex, at about 81%.
+The **Mega-Linter** check of your Pull Request is red, and the merge box reads **Merging is
+blocked**. The finding is in the MegaLinter comment on the Pull Request, under **code-analyzer-apex**.
+The deployment check next to it is green: the tests still run more than 80% of the org's Apex, at
+about 81%. The code deploys, and it is still refused.
 
 A SOQL query inside a `for` loop. Salesforce allows 100 queries per transaction, so this method
 works perfectly for a planner checking five installations and throws
@@ -149,15 +150,16 @@ what you get back**.
 
 One query, whatever the size of the list.
 
-!!! note "This one warns, it does not block"
-    The Apex analyzer is non blocking on this project: your Pull Request is still mergeable with
-    that finding on it. Nothing stops you shipping the loop except reading the comment. That is a
-    deliberate choice a project makes, and it is why the next step is the one that actually refuses.
+!!! note "Why a linter is allowed to refuse"
+    The loop works in every test and fails in production on the first busy day. Nobody reviewing a
+    Pull Request reliably spots it, and the analyzer always does, which is why real projects make it
+    blocking. It only refuses findings of Moderate severity and above: the Helios code has none, so
+    the only thing that can turn this check red is what you just wrote.
 
 ### 4. The tests block you
 
-Push the fix. MegaLinter no longer reports the loop. Now the deployment check **fails**, and this
-one is not advice:
+Push the fix. MegaLinter no longer reports the loop, and its check turns green. Now the deployment
+check **fails**:
 
 ```
 [sfdx-hardis][apextest] Test run code coverage (org wide) 76.92% should be greater than 80%
@@ -214,8 +216,11 @@ in `helios-dev` is still the old version. Send it there first. In the **Explorer
 `InstallationSchedulerTest.cls`. It is the Salesforce extension that comes with the extension pack,
 and it sends that one file to your default org.
 
-Then, on the Welcome page, click **Org Monitoring**. In the **Apex Tests & Security**
-section of the panel that opens, click the **Apex Tests** card **(1)** and pick `helios-dev`.
+Then open the **Org Monitoring Workbench** panel. There are two ways in, and both land in the same
+place: the **Org Monitoring** card of the Welcome page, or, in the sfdx-hardis side bar, the **Org
+Monitoring** section and its first entry, **Org Monitoring Workbench**. In the **Apex Tests &
+Security** section of that panel, click the **Apex Tests** card **(1)**. It asks for no org: it
+runs on your default org, `helios-dev`.
 
 ![The Org Monitoring Workbench, with the Apex Tests card](../../_assets/annotated/vscode/org-monitoring--apex-tests.png)
 
@@ -225,7 +230,7 @@ org queues its test runs, and the first one of the day can take ten.
 
 !!! note "The banner at the top is expected"
     *Org Monitoring Not Present (CI/CD Repo)* means this repository is a delivery pipeline and not a
-    monitoring repository. The cards below it still work against whatever org you pick. Lab 3.8 is
+    monitoring repository. The cards below it still work, against your default org. Lab 3.8 is
     where monitoring gets a repository of its own.
 
 !!! note "The Apex Tests tab is a different thing"
@@ -280,8 +285,10 @@ through Salesforce Code Analyzer on Apex, plus a flow scanner, plus the generic 
 the whole repository for a Pull Request into a major branch, which is why a rule can fire on a file
 you did not write.
 
-The linter is your team refusing, or here warning. The coverage floor is Salesforce refusing, and
-the project setting only chooses whether to ask for more. Neither of them checks that the code does
+The analyzer refuses because `.mega-linter.yml` says so, with
+`SALESFORCE_CODE_ANALYZER_APEX_DISABLE_ERRORS: false`: the shared sfdx-hardis configuration only
+reports Apex findings, and a project turns them into a gate. The linter is your team refusing. The
+coverage floor is Salesforce refusing, and the project setting only chooses whether to ask for more. Neither of them checks that the code does
 the right thing, which is the point: Salesforce is happy to deploy a hardcoded id with 100%
 coverage.
 
@@ -289,8 +296,7 @@ coverage.
 
 ## What you should see
 
-- The MegaLinter comment without the loop of `InstallationScheduler.cls`: the findings on code that
-  was there before you are still listed, and still only warn
+- The **Mega-Linter** check green, and its comment without the loop of `InstallationScheduler.cls`
 - The deployment check green, with coverage above 80% in the comment
 - `schedulableOn` in `helios-integration`, with one query outside the loop
 

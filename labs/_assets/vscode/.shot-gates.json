@@ -62,6 +62,12 @@
   "documentation-workbench": {
     "gate": "documentation-workbench"
   },
+  "editor-crew-capacity-csv": {
+    "gate": "training-files"
+  },
+  "editor-field-file": {
+    "gate": "training-files"
+  },
   "extension-config": {
     "gate": "extension-config"
   },
@@ -128,6 +134,9 @@
   "package-xml": {
     "gate": "pipeline-menus"
   },
+  "package-xml-filtered": {
+    "gate": "training-files"
+  },
   "pipeline-action-editors-base": {
     "gate": "pipeline-action-editors"
   },
@@ -167,6 +176,9 @@
   "pipeline-edit-action-command": {
     "gate": "pipeline-action-editors"
   },
+  "pipeline-edit-action-custom-function": {
+    "gate": "pipeline-action-editors"
+  },
   "pipeline-edit-action-data": {
     "gate": "pipeline-action-editors"
   },
@@ -177,6 +189,9 @@
     "gate": "pipeline-action-editors"
   },
   "pipeline-edit-action-remove-packagexml-items": {
+    "gate": "pipeline-action-editors"
+  },
+  "pipeline-edit-action-run-batch": {
     "gate": "pipeline-action-editors"
   },
   "pipeline-edit-action-schedule-batch": {

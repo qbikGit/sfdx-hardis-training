@@ -4,7 +4,7 @@ description: "Affrontez ce que les vraies livraisons Salesforce vous envoient : 
 id: l2-home
 level: 2
 lang: fr
-source_rev: "e7208fdb3ddb4226315f5595365f110c93c132af"
+source_rev: "4a78975a30a1ff4e3692cda141afda6db9cab7d4"
 ---
 
 # Niveau 2 - Contributeur Salesforce DevOps avancé
@@ -25,13 +25,15 @@ enregistrements de référence et un batch nocturne qui doivent suivre votre mod
 org, et aucun déploiement ne les emportera pour vous. Mariia, qui a modifié le même flow et le même
 permission set que vous et a mergé en premier.
 
-C'est la moitié du parcours contributeur qui décide si vous aimez travailler sur un projet CI/CD.
+C'est la moitié du parcours contributeur qui vous rend prêt pour un vrai projet CI/CD : quand
+quelque chose casse, vous savez où regarder et quoi faire, et vous perdez des minutes au lieu de
+jours.
 
 ## Ce que vous allez faire
 
 | Lab                                                                   | Titre                                                                   | Durée  |
 |-----------------------------------------------------------------------|-------------------------------------------------------------------------|--------|
-| [2.1](2-1-backpromote-your-teammates-work.md)                         | Backpromote : remettre votre org au niveau de l'équipe                  | 15 min |
+| [2.1](2-1-backpromote-your-teammates-work.md)                         | Backpromote : remettre votre org de dev au niveau de l'équipe           | 15 min |
 | [2.2](2-2-fix-a-missing-dependency-deployment-error.md)               | Corriger une erreur de déploiement due à une dépendance manquante       | 25 min |
 | [2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md)       | Réparer des enregistrements cassés avec une deployment action Apex      | 30 min |
 | [2.4](2-4-ship-reference-data-and-a-batch-with-deployment-actions.md) | Livrer des données de référence et un batch avec des deployment actions | 30 min |
@@ -57,7 +59,7 @@ Elles sont huit, et les labs les appellent par ces noms :
 | **Where am I?**                    | Dit à quel niveau et à quel lab vous en êtes, et ce qu'il faut faire ensuite                          |
 | **Simulate my teammates**          | Crée les branches et Pull Requests de collègues dont un lab a besoin                                  |
 | **Set up one of my training orgs** | Déploie l'application Helios et ses données dans une org que vous choisissez                          |
-| **Check my work**                  | Vérifie le lab que vous venez de terminer et affiche votre reçu                                       |
+| **Check my work**                  | Vérifie le lab que vous venez de terminer                                                             |
 | **Claim my badge**                 | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                             |
 | **Update my course**               | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration` |
 | **Reset this level**               | Remet votre repository au début du Niveau 2                                                           |
@@ -87,7 +89,8 @@ d'elles comme **Connected**, c'est qu'elle a expiré : Welcome page > **Training
 **Set up my training environment**. Il en crée une nouvelle avec l'application Helios, pointe le
 pipeline dessus, et laisse les autres tranquilles.
 
-Une nouvelle `helios-dev` part de l'application telle qu'elle est livrée, sans les stories que vous
-avez déjà mergées. Le Lab 2.1 est précisément la façon de les y faire entrer.
+Une nouvelle `helios-dev` reçoit l'application depuis la branche sur laquelle vous êtes quand elle
+est créée. Le Lab 2.1, étape 1c, dit comment vérifier qu'elle contient vos stories du Niveau 1, et
+comment les y mettre.
 
 [Commencer par le Lab 2.1](2-1-backpromote-your-teammates-work.md){ .md-button .md-button--primary }

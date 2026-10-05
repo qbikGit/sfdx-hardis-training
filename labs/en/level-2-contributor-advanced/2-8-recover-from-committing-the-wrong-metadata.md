@@ -62,6 +62,10 @@ Now open **Commit changes**, search the recent changes, and this time click the 
 
 ![The Metadata Retriever, with every row selected](../../_assets/annotated/vscode/metadata-retriever-recent-changes--select-all.png)
 
+In an org where Agentforce is on, the list can also carry `GenOpAgentConfig` rows, named after
+your flows. The Salesforce CLI does not know that type yet, so the retrieve stops and names it:
+untick those rows and retrieve again.
+
 ### 2. Look at what you did
 
 Look at the **Git Delta package.xml** report the publish offered: more than the one layout your story
@@ -116,13 +120,18 @@ and the file is still on your disk.
 
 ### 4. Deal with what you already pushed
 
+**Nothing to click in this step.** It is a decision to make before step 5, and in this lab it is
+already made for you: nobody has reviewed your Pull Request, so you are in the first case below,
+and step 5 does what it says. Read the second case anyway, it is the one a real project will put
+you in.
+
 Locally you are clean. The branch on GitHub is not: it still carries the over-wide commit, because
 the reset only changed the copy on your machine.
 
-**Nobody has reviewed it** (the normal case): push the corrected branch over it once you have
-re-published in the next step. That is what the reset authorised, and the publish will offer it. The
-mistake disappears from the history as though it never happened, which on your own feature branch
-before review is exactly what you want.
+**Nobody has reviewed it** (the normal case, and yours here): the corrected branch goes over it when
+you publish again in step 5. That is what the reset authorised, and the publish does it without
+asking. The mistake disappears from the history as though it never happened, which on your own
+feature branch before review is exactly what you want.
 
 **Somebody has already reviewed it**, or the branch is shared: do not force push. Rewriting history
 under a reviewer is how a review comment ends up attached to a commit that no longer exists. Commit

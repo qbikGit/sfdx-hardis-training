@@ -5,8 +5,10 @@ description: "Une collègue a mergé en premier sur le même flow et le même pe
 level: 2
 lab: 7
 lang: fr
-source_rev: "26480524514753ce9058724689c148988ba61775"
+source_rev: "535933b2169df3a48c9e413e1dd771eeb28b3f29"
 screenshots:
+  - annotated/salesforce/flow-builder-assign-crew
+  - annotated/salesforce/flow-builder-assign-crew-full
   - annotated/vscode/sidebar-commands-custom-menu-2--training-menu
   - annotated/vscode/pipeline-cards--new-user-story
   - annotated/vscode/git-palette-fetch--fetch
@@ -62,12 +64,21 @@ Dans `helios-dev` :
 1. Ouvrez le flow `Installation Assign Crew` et ajoutez une décision pour qu'une installation dont le
    type de toiture est `Flat` reçoive une équipe d'au moins 3 personnes, quoi que le flow ait décidé
    par ailleurs. Reliez-la à la **même affectation** sur laquelle le flow se termine déjà, pour que
-   la nouvelle règle tourne après le changement de statut
+   la nouvelle règle tourne après le changement de statut.
+   **Save**, puis **Activate** : chaque enregistrement d'un flow crée une nouvelle version, et seule
+   la version active s'exécute
 2. Sur le permission set `Helios Delivery Manager`, accordez l'accès en écriture sur
    `Installation__c.Crew_Notes__c`, pour qu'un planificateur puisse dire pourquoi une équipe a été
    renforcée
 
-Récupérez le flow et le permission set, commitez-les, et **arrêtez-vous là** : ne publiez pas encore.
+Dans Flow Builder, avec le canevas en **Auto-Layout**, le flow se lit alors ainsi : l'affectation
+sur laquelle il se terminait déjà, **Move To Scheduled** **(1)**, votre nouvelle décision **(2)**,
+et sur sa branche de toiture plate l'affectation qui porte l'équipe à trois **(3)**.
+
+![Le flow Installation Assign Crew avec la décision de toiture plate après Move To Scheduled](../../_assets/annotated/salesforce/flow-builder-assign-crew.png)
+
+Faites un retrieve du flow et du permission set, commitez-les, et **arrêtez-vous là** : ne publiez
+pas encore.
 
 ### 2. Pendant que vous construisiez, Mariia a mergé
 
@@ -141,7 +152,7 @@ accordé un champ sur le permission set à une ligne de là où vous avez accord
 relié le même élément d'affectation dans le flow à une décision à elle. Un outil de merge ne peut pas
 savoir lequel de deux connecteurs doit l'emporter. Vous, si.
 
-### 4. Faire entrer integration dans votre branche
+### 4. Merger integration dans votre branche
 
 Ouvrez le panneau **Source Control**, l'icône de trois petits cercles reliés par des traits dans la
 barre de gauche.
@@ -158,7 +169,7 @@ même commande est dans le menu **...** en haut du panneau Source Control, sous 
 
 ![La Command Palette filtrée sur Git: Merge](../../_assets/annotated/vscode/git-palette-merge--merge.png)
 
-VS Code demande quelle branche faire entrer. Tapez `integration` et choisissez **origin/integration**
+VS Code demande quelle branche merger. Tapez `integration` et choisissez **origin/integration**
 **(1)**, listée sous **remote branches** : la copie d'`integration` qui est sur GitHub, avec le
 travail de Mariia dedans. Pas l'`integration` toute seule si elle est aussi listée : c'est la copie
 de votre machine, que vous n'avez pas mise à jour depuis que vous avez branché.
@@ -169,6 +180,9 @@ Deux fichiers reviennent marqués en conflit. Ils apparaissent dans le panneau s
 **(1)**, chacun avec un **!** **(2)**, et la barre d'état dit qu'un merge est en cours.
 
 ![Le panneau Source Control avec les fichiers en conflit sous Merge Changes](../../_assets/annotated/vscode/git-merge-conflicts--merge-changes.png)
+
+La capture ne montre que le permission set. La vôtre montre aussi le flow `Installation_Assign_Crew`,
+avec son propre **!** : deux fichiers, comme GitHub l'a dit.
 
 <details markdown="1"><summary>Sous le capot : ce qu'a lancé Merge Branch</summary>
 
@@ -293,10 +307,17 @@ est pire qu'un flow qui échoue.
    modifications que git a vues depuis la dernière synchronisation, suppressions comprises, ce qui
    est plus que ce que cette étape demande
 
-3. Ouvrez **Flow Builder** dans l'org, sur `Installation_Assign_Crew`, et rajoutez votre règle de
-   toiture plate, **avant** son plafond : le flow porte d'abord l'équipe d'une toiture plate à trois,
-   et son plafond, qui tourne maintenant en dernier, a le dernier mot
-4. Revenez dans VS Code, faites descendre le flow reconstruit avec **Commit changes**, et indexez-le
+3. Ouvrez la version du flow de Mariia, qui est la **plus récente**. Ouvrir le flow depuis son nom
+   peut tomber sur une version plus ancienne, sans sa décision **Crew Over Cap** : dans Setup,
+   **Flows**, ouvrez le menu au bout de la ligne `Installation Assign Crew`, **View Details and
+   Versions**, et ouvrez la version en haut de la liste. Rajoutez votre règle de toiture plate,
+   **avant** son plafond : le flow porte d'abord l'équipe d'une toiture plate à trois, et son
+   plafond, qui tourne maintenant en dernier, a le dernier mot. Votre décision **(1)** vient en
+   premier, sa décision **Crew Over Cap** **(2)** en dernier. **Save**, puis **Activate**
+
+    ![Le flow reconstruit : le minimum de toiture plate d'abord, le plafond en dernier](../../_assets/annotated/salesforce/flow-builder-assign-crew-full.png)
+
+4. Revenez dans VS Code, faites un retrieve du flow reconstruit avec **Commit changes**, et indexez-le
    dans **Source Control**, à côté du permission set. Ne commitez pas encore : un merge se termine
    par un seul commit, et l'étape suivante le fait
 
@@ -305,7 +326,7 @@ Plus long à décrire, bien plus rapide à faire, et vous voyez ce que vous cons
 <details markdown="1"><summary>Sous le capot : le résoudre dans le fichier à la place</summary>
 
 Si vous savez lire du XML de flow et que vous y tenez : prenez la version de Mariia de l'élément et
-de ses connecteurs comme base, rajoutez votre décision de toiture plate après son plafond, et
+de ses connecteurs comme base, rajoutez votre décision de toiture plate avant son plafond, et
 supprimez tous les marqueurs de conflit. Publiez ensuite, ce qui rejoue les règles de nettoyage sur
 ce que vous avez écrit à la main.
 

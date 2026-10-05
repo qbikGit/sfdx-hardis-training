@@ -5,7 +5,7 @@ description: "Protégez ce que l'UAT garde pour elle avec package-no-overwrite, 
 level: 3
 lab: 5
 lang: fr
-source_rev: "f23aca466021abbfa96066a9fe688eb25b279ab8"
+source_rev: "044a8eacb552ef9251cdc58fd3e6a95fde210d1f"
 screenshots:
   - annotated/vscode/devops-pipeline-level3--create-promotion
   - annotated/vscode/pipeline-branch-modal-level3--what-it-carries
@@ -17,7 +17,7 @@ screenshots:
 depends_on:
   commands: [hardis:doc:release-notes, hardis:project:deploy:smart]
   flags: []
-  config: [mergeTargets, availableTargetBranches, packageNoOverwritePath]
+  config: [mergeTargets, availableTargetBranches, packageNoOverwritePath, failValidationOnPendingManualActions]
   panels: [pipeline, deploymentAction]
   docs: [salesforce-devops-deploy-major-branches, hardis/doc/salesforce-devops-release-notes]
 ---
@@ -104,12 +104,15 @@ l'adresse de production en UAT sans un mot. Le **gestionnaire d'écrasement** es
 cela : tout ce qui est listé dans `manifest/package-no-overwrite.xml` est retiré du déploiement quand
 l'org cible le possède déjà, et créé quand elle ne l'a pas.
 
-Le fichier n'existe pas encore, et vous n'avez pas à l'écrire. Dans le panneau **DevOps Pipeline**,
+Helios a déjà ce fichier : c'est la liste avec laquelle démarre tout projet sfdx-hardis. Elle protège
+les composants qu'une org garde pour elle presque partout, rapports et tableaux de bord maintenus en
+production, connected apps, named credentials, certificats. Les remote site settings n'y sont pas
+encore, et vous n'avez pas à écrire de XML pour les ajouter. Dans le panneau **DevOps Pipeline**,
 ouvrez le menu **Deployment packages**, celui qui ouvrait **Package XML** au [Lab 1.5](../level-1-contributor-basics/1-5-retrieve-commit-and-publish-your-changes.md), et choisissez
-**No Overwrite**. Le visualiseur de package s'ouvre sur une liste vide. Activez le **Edit mode**
+**No Overwrite**. Le visualiseur de package s'ouvre sur cette liste. Activez le **Edit mode**
 **(1)**, puis cliquez sur **Add Type** **(2)**.
 
-![Le visualiseur de package sur la liste no-overwrite vide, en mode édition](../../_assets/annotated/vscode/package-no-overwrite-edit--add-type.png)
+![Le visualiseur de package sur la liste no-overwrite par défaut, en mode édition](../../_assets/annotated/vscode/package-no-overwrite-edit--add-type.png)
 
 Tapez `RemoteSiteSetting`, le nom que Salesforce donne à ce type de composant, dans **Metadata Type
 API Name** **(1)**, et cliquez sur **Add** **(2)**.
@@ -117,9 +120,10 @@ API Name** **(1)**, et cliquez sur **Add** **(2)**.
 ![La fenêtre Add Metadata Type du visualiseur de package](../../_assets/annotated/vscode/package-no-overwrite-add-type--type.png)
 
 La nouvelle ligne **RemoteSiteSetting** a un bouton **Add member** : cliquez dessus, tapez
-`Helios_Warehouse`, et **Add**. Le visualiseur a écrit `manifest/package-no-overwrite.xml` pour vous,
-avec la forme de `manifest/package.xml` : un bloc par type de composant, ses membres listés par nom.
-**Edit File** l'ouvre en texte, si vous voulez le voir.
+`Helios_Warehouse`, et **Add**. Le visualiseur a ajouté un bloc `RemoteSiteSetting` à
+`manifest/package-no-overwrite.xml` pour vous. Le fichier a la forme de `manifest/package.xml` : un
+bloc par type de composant, ses membres listés par nom, ou `*` pour tous. **Edit File** l'ouvre en
+texte, si vous voulez le voir.
 
 Puis **Training: Level 3** > **Publish my pipeline configuration**, et mergez sa Pull Request une
 fois verte, comme au [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) : la liste de ce qui ne doit jamais être écrasé est de la configuration
@@ -198,6 +202,12 @@ La liste de cases est l'exception, et ce n'est pas de la décoration. **Cochez u
 vous avez fait la chose dans l'org**, et le job sfdx-hardis suivant relit la case et note l'action
 comme faite. Laissez-la décochée et la promotion suivante vous la redemandera.
 
+Une étape **avant** retient aussi le merge : tant que l'étape de délivrabilité de US-026 n'est pas
+marquée comme faite dans `uat`, le contrôle de la promotion s'arrête en rouge, juste après ses
+actions de pré-déploiement. Faites le clic dans `helios-uat`, cochez sa case (ou **Mark as done in
+uat** dans l'onglet **Deployment Actions** de VS Code), puis **Re-run all jobs** sur le contrôle :
+il enregistre l'étape et passe au vert.
+
 ### 5. Merger et regarder le déploiement
 
 Mergez la promotion. L'exécution **Process Deployment (sfdx-hardis)** démarre, cette fois sur `uat`.
@@ -206,10 +216,8 @@ C'est le premier déploiement vers cette org par la pipeline : il sera donc plus
 integration, l'UAT est en retard de tout ce que l'équipe a fait. Comptez plusieurs minutes.
 
 L'étape de délivrabilité est une étape **pre-deploy** : sa place est avant le merge, comme le dit
-l'étape 4. Si vous l'avez faite dans `helios-uat` et avez coché sa case, le log de ce job le dit :
-*Manual action Set Email Deliverability to All Email has been confirmed as done in org branch uat*.
-Sinon, faites-la maintenant et cochez la case : le prochain job qui porte cette Pull Request
-l'enregistre.
+l'étape 4, et le contrôle n'est pas passé au vert avant que vous ne l'ayez cochée. Ce job la saute :
+*Skipping Set Email Deliverability to All Email ...: already run in uat*.
 
 Puis lisez le log à la recherche du gestionnaire d'écrasement, au-dessus du déploiement, parmi les
 lignes qui commencent par `[NoOverwrite]` :
@@ -244,7 +252,7 @@ Ouvrez le panneau **DevOps Pipeline** et cliquez sur le nœud `uat`, comme vous 
 `integration` à l'étape 1. Dans le pied de page de cette fenêtre, le bouton de gauche affiche
 maintenant **Generate Promotion Notes for uat**. Cliquez dessus.
 
-Cette fenêtre a la colonne de cases à cocher et le bouton **Create promotion from uat (Beta)** dont
+Cette fenêtre a les cases à cocher et le bouton **Create promotion from uat (Beta)** dont
 parlait la note ci-dessus, parce qu'`uat` est la source de la seule étape de promotion que ce projet
 autorise. Ignorez les deux jusqu'au [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md).
 
@@ -275,16 +283,21 @@ Sur cette promotion, les notes générées s'ouvrent ainsi :
 
 | Metric           | Value |
 |------------------|-------|
-| Pull Requests    | 19    |
-| Tickets          | 15    |
+| Pull Requests    | 22    |
+| Tickets          | 16    |
 | Contributors     | 1     |
-| Added / Modified | 33    |
+| Added / Modified | 38    |
 ```
+
+Le décompte inclut les Pull Requests qui ne portent aucune story : celles de configuration du [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md)
+et de l'étape 2, et la promotion elle-même. Le vôtre dépend de votre parcours : un peu plus de 20 après les
+Niveaux 1 et 2, beaucoup moins après **Reset this level**, qui démarre le Niveau 3 sans leurs Pull
+Requests.
 
 Viennent ensuite un tableau des tickets, un des Pull Requests avec leurs auteurs et dates de merge,
 les métadonnées modifiées par type, et les deployment actions avec leur statut dans `uat` : l'étape
-manuelle de délivrabilité **success** si vous avez coché sa case avant le merge et **manual**
-sinon, les imports et la planification **success**.
+manuelle de délivrabilité **success**, cochée avant le merge, les imports et la planification
+**success**.
 
 Lisez-les puis améliorez-les. Des notes générées sont une liste complète, et une note de version que
 le métier lit a besoin de deux choses que le générateur ne peut pas connaître :
@@ -358,6 +371,16 @@ Documentation de la commande : [hardis:doc:release-notes](https://sfdx-hardis.cl
 - Les notes de version dans la description de la Pull Request de promotion
 
 ## En cas de problème
+
+**Le job de déploiement vers uat est rouge sur « Put the delivery managers in the Crew Leads group ».**
+Votre fork date d'avant le 2026-10-05, quand le correctif de Mariia au [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) ne livrait pas encore le
+groupe public Crew Leads : `helios-uat` n'en a pas, et sa première action le cherche. Les
+métadonnées sont déployées, donc ne redéployez pas. Rattrapez-le comme le [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) l'a montré : créez
+le groupe dans `helios-uat` (**Setup** > **Public Groups** > **New**, nom de groupe
+`Helios_Crew_Leads`), puis dans le panneau **DevOps Pipeline** cliquez sur `uat`, onglet
+**Deployment Actions**, **Retry** sur l'action en échec, et répondez **Run all the next
+actions**. Créez le même groupe dans `helios-preprod` et `helios-prod` avant leurs promotions du
+[Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md).
 
 **Le contrôle échoue avec des erreurs d'authentification pour uat.**
 [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) pour la branche `uat` : les secrets, et la pré-autorisation de l'External Client App dans
