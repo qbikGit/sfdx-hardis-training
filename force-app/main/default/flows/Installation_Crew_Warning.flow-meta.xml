@@ -39,7 +39,7 @@
             <label>Too Small</label>
         </rules>
     </decisions>
-    <description>Warns the planner when the crew assigned to an installation is too small. It warns on every save, which the planners have started to complain about.</description>
+    <description>Warns the planner when the crew assigned to an installation is too small for the panels it needs.</description>
     <environments>Default</environments>
     <formulas>
         <description>True when eight panels a person do not cover the job, and no warning was sent yet</description>
