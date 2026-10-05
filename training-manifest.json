@@ -194,7 +194,8 @@
         "annotated/vscode/work-save-commit-ready",
         "annotated/vscode/work-save-package-xml",
         "annotated/vscode/pipeline-packages-menu--package-xml",
-        "annotated/vscode/package-xml--custom-field"
+        "annotated/vscode/package-xml--custom-field",
+        "annotated/vscode/work-save-package-xml--cleaning"
       ],
       "translations": {
         "fr": {
@@ -391,7 +392,7 @@
       "screenshots": [
         "annotated/vscode/pipeline-cards--my-pull-request",
         "annotated/vscode/pipeline-cards--new-user-story",
-        "annotated/vscode/pipeline-pr-actions-empty",
+        "annotated/vscode/pipeline-workflow-cards",
         "annotated/vscode/pipeline-edit-action-apex",
         "annotated/vscode/pipeline-pr-actions-list"
       ],
@@ -416,7 +417,8 @@
       "flags": [],
       "config": [
         "dataPackages",
-        "commandsPostDeploy"
+        "commandsPostDeploy",
+        "failValidationOnPendingManualActions"
       ],
       "docs": [
         "salesforce-devops-agent-data-workspaces",
@@ -727,25 +729,40 @@
       "file": "labs/en/level-3-release-manager/3-3-deploy-to-integration-and-read-the-log.md",
       "url": "https://sfdx-hardis-training.github.io/en/level-3-release-manager/3-3-deploy-to-integration-and-read-the-log/",
       "commands": [
-        "hardis:project:deploy:smart"
+        "hardis:project:deploy:smart",
+        "hardis:project:action:run",
+        "hardis:project:action:set-status",
+        "hardis:project:action:update"
       ],
-      "flags": [],
+      "flags": [
+        "--move-to-pr",
+        "--org-branch"
+      ],
       "config": [
         "useDeltaDeployment",
         "enableDeltaDeploymentBetweenMajorBranches",
-        "testLevel"
+        "testLevel",
+        "commandsPostDeploy",
+        "movedFrom"
       ],
       "docs": [
         "salesforce-devops-deploy-major-branches",
-        "salesforce-devops-smart-deployment"
+        "salesforce-devops-smart-deployment",
+        "salesforce-devops-work-on-user-story-deployment-actions"
       ],
       "panels": [
-        "pipeline"
+        "pipeline",
+        "deploymentAction"
       ],
       "screenshots": [
         "annotated/vscode/pipeline-config-deployment--delta",
         "annotated/vscode/orgs-manager",
-        "annotated/vscode/devops-pipeline--deployment-status"
+        "annotated/vscode/devops-pipeline--deployment-status",
+        "annotated/web/github-pr-deployment-actions-failed",
+        "annotated/vscode/pipeline-branch-modal-actions-failed",
+        "annotated/vscode/action-run-prompts",
+        "annotated/vscode/pipeline-edit-action-moved",
+        "annotated/web/github-pr-deployment-actions-moved"
       ],
       "translations": {
         "fr": {
@@ -806,7 +823,8 @@
       "config": [
         "mergeTargets",
         "availableTargetBranches",
-        "packageNoOverwritePath"
+        "packageNoOverwritePath",
+        "failValidationOnPendingManualActions"
       ],
       "docs": [
         "salesforce-devops-deploy-major-branches",
@@ -1138,7 +1156,8 @@
       "salesforce-devops-work-on-user-story-deployment-actions": [
         "lab-2-3",
         "lab-2-4",
-        "lab-2-9"
+        "lab-2-9",
+        "lab-3-3"
       ],
       "salesforce-devops-agent-data-workspaces": [
         "lab-2-4"
@@ -1284,6 +1303,7 @@
         "lab-2-3",
         "lab-2-4",
         "lab-2-9",
+        "lab-3-3",
         "lab-3-5"
       ],
       "dataWorkbench": [
@@ -1369,6 +1389,15 @@
       ],
       "hardis:project:configure:auth": [
         "lab-3-1"
+      ],
+      "hardis:project:action:run": [
+        "lab-3-3"
+      ],
+      "hardis:project:action:set-status": [
+        "lab-3-3"
+      ],
+      "hardis:project:action:update": [
+        "lab-3-3"
       ],
       "hardis:doc:release-notes": [
         "lab-3-5",
@@ -1463,7 +1492,8 @@
       "commandsPostDeploy": [
         "lab-2-3",
         "lab-2-4",
-        "lab-2-9"
+        "lab-2-9",
+        "lab-3-3"
       ],
       "apexScript": [
         "lab-2-3"
@@ -1473,6 +1503,10 @@
       ],
       "dataPackages": [
         "lab-2-4"
+      ],
+      "failValidationOnPendingManualActions": [
+        "lab-2-4",
+        "lab-3-5"
       ],
       "testCoverageNotBlocking": [
         "lab-2-5"
@@ -1505,6 +1539,9 @@
         "lab-3-4"
       ],
       "enableDeltaDeploymentBetweenMajorBranches": [
+        "lab-3-3"
+      ],
+      "movedFrom": [
         "lab-3-3"
       ],
       "packageNoOverwritePath": [
