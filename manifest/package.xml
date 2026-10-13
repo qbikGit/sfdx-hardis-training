@@ -66,6 +66,7 @@
     </types>
     <types>
         <members>Helios_Delivery_Crew</members>
+        <members>Helios_Delivery_Manager</members>
         <name>PermissionSet</name>
     </types>
     <types>
