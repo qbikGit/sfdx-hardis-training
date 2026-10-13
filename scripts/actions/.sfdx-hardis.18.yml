@@ -1,0 +1,31 @@
+commandsPostDeploy:
+  - id: 35c1f287-a061-4460-bdf1-a4c3f49c9a6a
+    label: Load Reference Data
+    type: data
+    command: ""
+    parameters:
+      sfdmuProject: HeliosCrewRefData
+    runOnlyOnceByOrg: true
+    context: process-deployment-only
+  - id: f0713e0c-2c86-4d7a-b1d2-8cf07c706d0d
+    label: Schedule Batch
+    type: schedule-batch
+    command: ""
+    parameters:
+      className: CrewCapacityBatch
+      cronExpression: 0 0 2 * * ?
+    runOnlyOnceByOrg: true
+    context: process-deployment-only
+commandsPreDeploy:
+  - id: 35777a3a-da06-4f39-ba07-3a3ec7f52d0c
+    label: Set Email Deliverability to All Email
+    type: manual
+    command: ""
+    parameters:
+      instructions: |-
+        1. Open **Setup**, type `Deliverability` in the Quick Find box, and open it.
+        2. Under **Access to Send Email**, set **Access level** to **All email**.
+        3. Click **Save**.
+        4. Check: the page reads **All email**. If it already did, there is nothing to do.
+    runOnlyOnceByOrg: true
+    context: all
