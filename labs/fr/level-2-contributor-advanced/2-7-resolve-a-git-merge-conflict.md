@@ -5,7 +5,7 @@ description: "Une collègue a mergé en premier sur le même flow et le même pe
 level: 2
 lab: 7
 lang: fr
-source_rev: "535933b2169df3a48c9e413e1dd771eeb28b3f29"
+source_rev: "1f4e1a5e5e8192311f290f6ed5bcdb20de2af639"
 screenshots:
   - annotated/salesforce/flow-builder-assign-crew
   - annotated/salesforce/flow-builder-assign-crew-full
@@ -30,7 +30,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~35 min
+**Durée** : ~30 min<!-- observed --> (observé : médiane 32 min, 5 participants, le plus rapide 13 min)<!-- /observed -->
 
 **Vous allez** : affronter un vrai conflit de merge sur deux fichiers qui entrent en conflit de façon
 très différente, et résoudre les deux sans perdre le travail de personne.
@@ -182,7 +182,9 @@ Deux fichiers reviennent marqués en conflit. Ils apparaissent dans le panneau s
 ![Le panneau Source Control avec les fichiers en conflit sous Merge Changes](../../_assets/annotated/vscode/git-merge-conflicts--merge-changes.png)
 
 La capture ne montre que le permission set. La vôtre montre aussi le flow `Installation_Assign_Crew`,
-avec son propre **!** : deux fichiers, comme GitHub l'a dit.
+avec son propre **!** : deux fichiers, comme GitHub l'a dit. Sous **Staged Changes**, deux autres
+fichiers attendent, le champ créé par Mariia et le layout qu'elle a modifié : git les a mergés tout
+seul. Laissez-les là, ils font partie du merge.
 
 <details markdown="1"><summary>Sous le capot : ce qu'a lancé Merge Branch</summary>
 

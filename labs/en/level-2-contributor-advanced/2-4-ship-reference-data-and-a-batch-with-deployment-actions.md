@@ -28,7 +28,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~30 min
+**Time**: ~45 min<!-- observed --> (observed: median 45 min, 9 learners, fastest 24 min)<!-- /observed -->
 
 **You will**: meet the worst kind of failure, the one where nothing fails, and fix it with three
 deployment actions of three different kinds.
@@ -86,7 +86,7 @@ In `helios-dev`, create:
   `force-app/main/default/classes/`, in the Explorer, with copy and paste, as in [Lab 2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md). What they
   compute matters far less here than the fact that somebody has to schedule them in every org,
   which is the whole point of the lab
-- The access, on **Helios Delivery Manager**: **Read**, **Create** and **Edit** on Crew Capacity,
+- The access, on the **Helios Delivery Manager** permission set: **Read**, **Create** and **Edit** on Crew Capacity,
   **Read** and **Edit** on its four fields, and under **Tab Settings** on the same page, **Available**
   and **Visible**. Planners maintain these numbers, and it is also the permission set the pipeline's
   own user holds in every org: without it the data load of step 4 would find fields it is not
@@ -96,8 +96,9 @@ In `helios-dev`, create:
 Then the records. Helios supports 12 combinations, three crew types by four roof types, and each
 one needs a Crew Capacity record saying how many panels a day that crew lays on that roof. Typing
 twelve records teaches nothing this lab is about, so the Training menu creates them:
-**Training: Level 2** **(1)** > **Create my lab records** **(2)**, pick **Lab 2.4 - the 12 Crew
-Capacity records**, then **helios-dev**, and answer **Yes** to **Create them?**.
+**Training: Level 2** **(1)** > **Create my lab records** **(2)**. The panel picks **Lab 2.4 - the
+12 Crew Capacity records** and **helios-dev** on its own, the only lab and the only org it offers
+here: answer **Yes** to **Create them?**.
 
 ![The Level 2 Training menu, with Create my lab records](../../_assets/annotated/vscode/sidebar-commands-custom-menu-2--lab-records.png)
 
@@ -118,7 +119,8 @@ The menu entry ran:
 
 which loaded `scripts/lab-records/lab-2-4/Crew_Capacity__c.csv` into `helios-dev` with
 `sf data upsert bulk`, matching on `External_Id__c`, and added an **All** list view to the object
-when it had none, so the link has a list to open. On a real project somebody enters these
+when it had none, so the link has a list to open. That list view is metadata, like the object: it
+is one of the things step 2 retrieves. On a real project somebody enters these
 records in the org, or loads them from a spreadsheet: either way they exist in one org only, which
 is the problem the rest of this lab solves.
 
@@ -126,14 +128,17 @@ is the problem the rest of this lab solves.
 
 ### 2. Publish and watch nothing fail
 
-Retrieve the object, its fields, its tab, the `Helios_Delivery` app and `Helios_Delivery_Manager`
-with **Commit changes**. The two Apex classes are not retrieved: they are already files of the
+Retrieve the object, its fields, its tab, its **All** list view (the `ListView` row named
+`Crew_Capacity__c.All`), the `Helios_Delivery` app and `Helios_Delivery_Manager` with **Commit
+changes**. Without the list view, the tab would open in the other orgs on **Recently Viewed**,
+which shows each person only the records they opened themselves. The two Apex classes are not retrieved: they are already files of the
 project, and Source Control lists the four you copied next to what you retrieved. Commit all of it,
 then **Save / Publish**, push, Pull Request. The check is green. Merge. The deployment is green.
 
 Now open `helios-integration` and look:
 
-- The **Crew Capacity** tab is in the Helios Delivery app, **with zero records**
+- The **Crew Capacity** tab is in the Helios Delivery app and its **All** list view is there,
+  **with zero records**
 - `CrewCapacityBatch` exists, **scheduled nowhere**
 - Nobody checked that the org is allowed to send the batch's summary email
 
@@ -255,13 +260,14 @@ email at all is a setting in Setup that no deployment can change. The batch emai
 summary when it finishes, and in an org where deliverability is not **All email**, that email is
 dropped without a word.
 
-| Field        | Value                                   |
-|--------------|-----------------------------------------|
-| Type         | **Manual**                              |
-| Label        | `Set Email Deliverability to All Email` |
-| When         | **Before Metadata Deployment**          |
-| Instructions | the four numbered lines below           |
-| Target orgs  | All target orgs                         |
+| Field              | Value                                   |
+|--------------------|-----------------------------------------|
+| Type               | **Manual**                              |
+| Label              | `Set Email Deliverability to All Email` |
+| When               | **Before Metadata Deployment**          |
+| Execution Contexts | Validation and Deployment jobs          |
+| Instructions       | the four numbered lines below           |
+| Target orgs        | All target orgs                         |
 
 ```
 1. Open **Setup**, type `Deliverability` in the Quick Find box, and open it.
@@ -282,6 +288,11 @@ takes Markdown: number the clicks, and finish with what the person should see af
 email before anything that sends one arrives in it, so the person merging does this click first,
 then merges. A manual step declared before the deployment is listed first in the Pull Request
 comment, which is where they read it.
+
+**Execution Contexts** is **Validation and Deployment jobs**, unlike the two others too: the check
+of the Pull Request has to see the step to ask for it before the merge. Once **When** reads
+**Before Metadata Deployment**, a manual step offers nothing else. If your dialog still lists three
+contexts, your extension is older: pick this one.
 
 A manual step does not do anything. It **appears in the Pull Request comment and in the deployment
 report**, so the person releasing to production is told, in the release itself, that there is a
@@ -314,10 +325,17 @@ says it is. Its log names the step and the three ways to mark it, and sfdx-hardi
 
 ![The Deployment Actions comment of the US-026 Pull Request](../../_assets/annotated/web/github-pr-deployment-actions.png)
 
-- **Pending manual actions** **(1)**: your deliverability step, with a checkbox, for `integration`
-- **Status by org branch** **(2)**: one row per action, with its moment. The deliverability step,
-  **pre-deploy**, waits for somebody; the import and the schedule, **post-deploy**, read **not run
-  in this org branch yet**, because the check stopped before them, and a check runs neither anyway
+Under its banner, a verdict reads **In integration: 👋 1 to do by hand**, then:
+
+- **Needs you** **(1)**: your deliverability step, with a checkbox, marked 👋 and followed by
+  *(org branch: integration)*
+- **Status by org** **(2)**: one row per action, with its moment. The deliverability step,
+  **pre-deploy**, is **to do by hand**; the import and the schedule, **post-deploy**, read **not
+  run in this org branch yet**, because the check stopped before them, and a check runs neither
+  anyway
+
+The check comment lists the step too, under **👋 To do by hand in `integration` before the
+deployment**, with a checkbox of its own.
 
 Do the click in `helios-integration` (it already reads **All email** on your scratch orgs, so it is
 a ten-second check), then tick the box **(1)**. In VS Code, **Mark as done in integration** on the
@@ -334,8 +352,9 @@ step is skipped, because it is done in `integration` already.
 A manual action declared **Before Metadata Deployment** has to be performed before the merge. The
 validation job stops right after its pre-deployment actions while one of them is not marked as
 performed in the target org branch. A draft Pull Request (or one with `draft` in its title) is not
-stopped, so you can keep checking a story in progress. Projects that do not want this set
-`failValidationOnPendingManualActions: false` in `config/.sfdx-hardis.yml`.
+stopped, so you can keep checking a story in progress. sfdx-hardis only lists the step by default:
+the Helios project turns the stop on with `failValidationOnPendingManualActions: true` in
+`config/.sfdx-hardis.yml`.
 
 </details>
 
@@ -343,9 +362,9 @@ stopped, so you can keep checking a story in progress. Projects that do not want
 
 Do not take the green tick for it. **Open the org and look:**
 
-- The **Crew Capacity** tab of the Helios Delivery app, on its **All** list view, has 12 records
+- The **All** list view of the **Crew Capacity** tab, in the Helios Delivery app, has 12 records
 - **Setup > Scheduled Jobs** lists `Helios crew capacity nightly`
-- The manual step reads **done** for `integration` under **Status by org branch**, with the date
+- The manual step reads **done** for `integration` under **Status by org**, with the date
   of your tick
 
 You did the click before the merge, which is what a real release needs: the person merging does it
@@ -406,6 +425,7 @@ All three are entries in the same YAML file under `scripts/actions/`:
         parameters:
           sfdmuProject: HeliosCrewRefData
         context: process-deployment-only
+        runOnlyOnceByOrg: true
       - id: 5b2e8c71-0a3d-4f6e-9c1b-026000000002
         label: Schedule the nightly crew capacity recalculation
         type: schedule-batch
@@ -440,6 +460,21 @@ Command documentation: [hardis:org:data:import](https://sfdx-hardis.cloudity.com
 - The manual step listed in the deployment report, ticked off by you
 
 ## If it goes wrong
+
+**The check stays green in step 5, although the manual step is not marked as done.**
+Your fork does not hold the setting that makes the check stop: the course received it on
+2026-10-07, and a fork updated before that day only lists the step in the comment. Nothing is
+broken, but nothing stops the merge either. Click **Welcome page** > **Training: Level 2** >
+**Update my course**, merge the Pull Request it opens, then bring `integration` into your branch
+as in [Lab 2.1](2-1-backpromote-your-teammates-work.md) and publish: the next check stops on the step.
+
+**The action file is called `.sfdx-hardis.draft.yml`, or the check stops on *Draft deployment actions file found*.**
+You added the action while the panel knew no Pull Request for your branch: the **My Pull Request**
+card read *Pull Request not created yet*, so the action was kept in a draft. The pipeline only reads
+`scripts/actions/.sfdx-hardis.` followed by the number of the Pull Request and `.yml`, so a draft, or
+a file renamed to a name of your own, is never run. Once your Pull Request exists, open the
+**DevOps Pipeline** panel again and click **Refresh**: it renames the draft after your Pull Request
+and tells you so in a notification. Commit the renamed file, then **Save / Publish**.
 
 **The Crew Capacity tab is missing from the app in `helios-integration`.**
 Either the tab or the `Helios_Delivery` app was not in your Pull Request, or the tab is not

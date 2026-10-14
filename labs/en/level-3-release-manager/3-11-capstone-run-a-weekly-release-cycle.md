@@ -13,7 +13,7 @@ depends_on:
   commands: [hardis:project:deploy:smart, hardis:doc:release-notes, hardis:doc:dora-report]
   flags: []
   config: [mergeTargets, productionBranch]
-  panels: [pipeline]
+  panels: [pipeline, doraMetrics]
   docs: [salesforce-devops-release-home, salesforce-devops-setup-checklist]
 ---
 
@@ -76,13 +76,13 @@ Verify in `helios-uat` that the stories are usable, not only deployed.
 ### Thursday: release to production
 
 Promote `uat` into `preprod` first, and check `helios-preprod` behaves. Then create the release, the Pull
-Request from `preprod` into `main`, titled `Release ...`. Read the counts line in the sfdx-hardis comment and stop if anything is being
+Request from `preprod` into `main`, titled `Release ...`. Read the **Metadata** row of the sfdx-hardis comment and stop if anything is being
 deleted that you were not expecting. Merge, watch, verify, do the manual steps.
 
 Everything [Lab 3.7](3-7-hotfix-and-retrofit.md) put in at `preprod` is already in `main`, so this release should not be moving
-it again. Read the counts line with that in mind: what goes out this week is Romain's help text,
+it again. Read the **Metadata** row with that in mind: what goes out this week is Romain's help text,
 the retrofits travelling up from `integration`, and US-058 and US-060, which have been waiting in
-`uat` since [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md). `deleted: 0` is still the number to stop on.
+`uat` since [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md). A `deleted` count in that row is still the thing to stop on.
 
 **That promotion is also what ends the exception.** US-057, US-059 and US-061 went to `preprod` on
 their own last week; this one carries US-058 and US-060 the ordinary way, and `uat` and `preprod`
@@ -99,8 +99,13 @@ this release is for, and put them in the description of the Pull Request from `p
 
 ### Friday: measure
 
-Set `helios-prod` as your default org in **Orgs Manager**, so the report measures production rather
-than your sandbox, then run the DORA report and compare it with the baseline you took in [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md).
+Open the **DORA metrics** panel from the gear menu of the **DevOps Pipeline**, as in [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md), and
+read **Time to production** in the pipeline flow, the row of `main`, then the one of
+`integration`. Export the report again, **Export** then **Markdown report**, and compare it with the baseline you took in [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md).
+
+The panel compares each number with the previous period by itself, with an arrow. Your pipeline is
+younger than the 90 days of a period, so the period before is empty and no arrow is drawn yet: this
+week, the baseline file is still what you compare with.
 
 Then read back over the week, and answer three questions for yourself, the ones a successor would
 ask:
@@ -181,10 +186,14 @@ A Level 3 claim re-runs the **Level 1 and Level 2 audits first**. That is how th
 enforced, because a Trailmix cannot gate anything. The command runs those same audits on your
 machine before it opens anything, so you find out here rather than on the issue.
 
+Then, as for the two other levels: it asks for your Trailblazer username, the last part of the
+address of your Trailhead profile, and opens the claim form filled in. Pick your level in the
+**Level** dropdown, which a link cannot prefill, then tick the three boxes and submit.
+
 !!! tip "If the course helped you"
     [hardisgroupcom/vscode-sfdx-hardis](https://github.com/hardisgroupcom/vscode-sfdx-hardis) is the
     extension every click of this course went through. A star is how an open source project stays
-    visible: open its page and click **Star** **(1)**, at the top right. Give it a star if you liked this
+    visible: open its page and click **Star** **(1)**, on the right of the repository name. Give it a star if you liked this
     course!
 
     ![The Star button of the vscode-sfdx-hardis repository on GitHub](../../_assets/annotated/web/github-star-vscode-sfdx-hardis.png)
@@ -208,14 +217,27 @@ whatever project you actually work on and count what is missing.
 **Two: delete your training orgs, or keep them deliberately.** The scratch orgs delete themselves
 after 30 days. The two Developer Edition orgs holding a fictional solar company are fine to keep as a
 place to try things, and `helios-prod` stays a Dev Hub you can create scratch orgs from. If you keep
-them, delete the `SFDX_AUTH_URL_INTEGRATION` and `SFDX_AUTH_URL_UAT` secrets if they are somehow
-still there, and remember the JWT certificates in your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`) are real credentials to real orgs.
+them, delete the `SFDX_AUTH_URL_INTEGRATION` and `SFDX_AUTH_URL_UAT` secrets, which [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) left in
+place, and remember the JWT certificates in your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`) are real credentials to real orgs.
 
 **Three: keep promotion branches as the exception.** [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md) had you assemble one, and this
 week put the pipeline back. On a real project the pressure runs the other way: the first subset is
 agreed for a good reason, the second because the first one worked, and after a quarter nobody can
 say what any org contains. If you find yourself assembling one every week, the thing to fix is the
 sign-off, not the tooling.
+
+## When you would rather not do it alone
+
+You now know what a release cycle costs: somebody in the seat, every week. When nobody on your team
+can hold it, [Cloudity](https://sfdx-hardis.cloudity.com/salesforce-devops-home/#get-help-from-cloudity), the company behind sfdx-hardis and this course, sets the
+pipeline up, trains the team, and provides a release manager as a service. Its
+[Managed Services](https://cloudity.com/services/managed-services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-3) go further and run the org for you.
+
+The same company delivers Agentforce, Data Cloud, Revenue Cloud and Field Service projects:
+[see everything Cloudity does](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-3).
+
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en.png){ .cloudity-banner .wide-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-3)
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en-narrow.png){ .cloudity-banner .narrow-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-3)
 
 ## Thank you
 

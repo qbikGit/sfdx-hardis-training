@@ -5,7 +5,7 @@ description: "Créez un champ personnalisé, accordez-le par un permission set e
 level: 1
 lab: 4
 lang: fr
-source_rev: "3a6b3f5a9738b10c6a54060e5dbed6422f08d256"
+source_rev: "a96443edecd5875adb0900e232a8ea0a95af0e0e"
 screenshots:
   - annotated/vscode/orgs-manager-actions
   - annotated/salesforce/object-manager-fields
@@ -23,7 +23,7 @@ depends_on:
 
 **Niveau** : 1 Contributeur, les bases
 
-**Durée** : ~15 min
+**Durée** : ~10 min<!-- observed --> (observé : médiane 13 min, 10 participants, le plus rapide 9 min)<!-- /observed -->
 
 **Vous allez** : construire US-014 comme un admin construit n'importe quoi, en cliquant dans
 Salesforce Setup, et le vérifier sur de vrais enregistrements.
@@ -37,7 +37,8 @@ dans `helios-dev`, votre propre org, jamais dans l'org partagée.
 ## Avant de commencer
 
 - [ ] [Lab 1.3](1-3-start-a-user-story-on-a-git-branch.md) terminé : vous êtes sur `features/US-014-panels-required`
-- [ ] La section Status du panneau sfdx-hardis affiche `helios-dev` comme org courante
+- [ ] La section Status du panneau sfdx-hardis affiche le nom d'utilisateur de `helios-dev` comme org
+      courante : celui de la ligne `helios-dev` d'**Orgs Manager**, car cette section n'affiche jamais d'alias
 
 ## Les étapes
 
@@ -150,8 +151,9 @@ Un champ vide ne prouve rien. Mettez-y un nombre.
 L'onglet **Installations** **(1)** est la façon de revenir à cette liste depuis n'importe où dans
 l'application. À droite de l'enregistrement se trouve le **Panel delivery timeline** **(2)**, qui
 liste les palettes réservées pour cette installation avec leurs quantités. L'image a été prise avant
-que cette story existe, sur une installation sans palette réservée : il n'y a donc pas non plus de
-Panels Required dans sa colonne. La plupart des installations ont deux ou trois palettes.
+que cette story existe : il n'y a donc pas encore de Panels Required dans sa colonne. L'installation
+qu'elle montre a deux palettes, de 23 et 16 panneaux : 39 est le nombre à y saisir. La plupart des
+installations en ont deux ou trois.
 
 1. Sur `INST-00001`, cliquez sur le crayon à droite de **Panels Required**, tapez le nombre auquel
    la timeline aboutit, et cliquez sur **Save** en bas de la page. Cette page n'a pas de bouton

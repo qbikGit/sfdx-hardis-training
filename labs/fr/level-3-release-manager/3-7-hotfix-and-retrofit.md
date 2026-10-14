@@ -5,11 +5,11 @@ description: "Livrez un hotfix Salesforce de preprod vers la production quand la
 level: 3
 lab: 7
 lang: fr
-source_rev: "227087b70542c7fdd5f235321968b5154475be67"
+source_rev: "6728ea0bdbef0642d26d73e6d790d7b664597e03"
 screenshots:
   - annotated/salesforce/validation-rule
   - annotated/vscode/welcome-custom-menu-3
-  - annotated/web/github-pr-files
+  - annotated/web/github-pr-files-hotfix
   - annotated/web/github-pr-merge
   - annotated/vscode/devops-pipeline-level3--release-to-prod
   - annotated/web/github-pr-deployed
@@ -115,7 +115,7 @@ Cela ouvre sa Pull Request de `fix/US-045-installation-date-hotfix` vers **`prep
 Ouvrez la Pull Request, **Files changed** **(1)**. Un fichier, la règle de validation **(2)**, et la
 modification est la ligne ajoutée **(3)** :
 
-![L'onglet Files changed d'une Pull Request](../../_assets/annotated/web/github-pr-files.png)
+![L'onglet Files changed de la Pull Request du hotfix, une règle de validation et une ligne ajoutée](../../_assets/annotated/web/github-pr-files-hotfix.png)
 
 ```
   NOT(ISPICKVAL(Status__c, "Cancelled"))
@@ -134,7 +134,7 @@ Petite, et son rayon d'impact tient en une phrase : **les installations annulée
 
 Quand le contrôle est vert, mergez-la avec **Squash and merge**, depuis la flèche à côté de **Merge
 pull request** **(1)** : la branche de Romain est un correctif, et un correctif se squashe comme
-chaque User Story ([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)). La promotion vers `main` qui suit est mergée, pas squashée.
+chaque User Story ([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)), ce que dit aussi la ligne **How to merge** du commentaire vert du contrôle. La promotion vers `main` qui suit est mergée, pas squashée.
 
 ![Merger une Pull Request sur GitHub](../../_assets/annotated/web/github-pr-merge.png)
 
@@ -159,9 +159,11 @@ Son contrôle déploie contre la production en mode validation, ce qui est exact
 ### 6. Confirmer que c'est en ligne
 
 Mergez, et regardez l'exécution **Process Deployment (sfdx-hardis)** sur `main`. Quand elle se
-termine, le commentaire sfdx-hardis dit ce qui a atteint l'org : la bannière **(1)**, la ligne de
-compteurs **(2)**, et la ligne Quick Deploy **(3)** : le merge a libéré la validation que son contrôle
-avait déjà faite sur la production, au lieu de déployer à nouveau. L'image est le commentaire d'un
+termine, le commentaire sfdx-hardis dit ce qui a atteint l'org : le verdict **✅ Deployed to `main`**
+**(1)**, la ligne **Metadata** **(2)**, qui dit comment il a été déployé, par exemple **Full Quick
+Deploy**, et ce qui a changé, et la ligne **Apex tests** **(3)**, **Already run during the
+validation** : le merge a déployé la validation que son contrôle avait déjà faite sur la production,
+au lieu de déployer à nouveau. L'image est le commentaire d'un
 déploiement précédent, vos compteurs sont donc différents.
 
 ![Le commentaire sfdx-hardis sur une Pull Request mergée](../../_assets/annotated/web/github-pr-deployed.png)
@@ -243,7 +245,10 @@ nouveau.
 ![La fin de Save / Publish, avec sa barre d'actions](../../_assets/annotated/vscode/work-save-completed.png)
 
 Ouvrez la Pull Request vers `integration`, intitulez-la
-`Retrofit: US-045 back down into integration`, attendez ses contrôles, et mergez-la. `integration`
+`Retrofit: US-045 back down into integration`, attendez ses contrôles, et mergez-la avec **Merge pull
+request**, jamais avec un squash. Le commentaire vert du contrôle dit pourquoi sur sa ligne **How to
+merge** : un retrofit rapporte des commits d'une autre branche majeure, qui doivent rester tels
+quels. `integration`
 porte maintenant tout ce que la production porte, et la prochaine story construite dessus ne peut
 plus emporter le correctif.
 
@@ -255,9 +260,10 @@ rapport à `preprod`. La pipeline traite `preprod` comme n'importe quelle autre 
 qui en fait un hotfix est la cible, pas un mode.
 
 Le préfixe de branche mérite une seconde de réflexion, pour une raison qui dépasse le rangement : le
-**rework rate** DORA du [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md) compte les Pull Requests de hotfix, et en reconnaît une à un préfixe
+**Rework** DORA du [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md) compte les Pull Requests de hotfix, et en reconnaît une à un préfixe
 de branche `hotfix/`, `fix/` ou `bugfix/`. Ce projet appelle ses branches de correction `fix/`,
-celle-ci compte donc.
+celle-ci compte donc, sur la branche dans laquelle elle a été mergée : `preprod`. La livraison qui
+l'emmène ensuite vers `main` vient de `preprod`, donc le **Rework** de `main` ne bouge pas.
 
 **Le retrofit** est du Git de bout en bout, et rien n'est récupéré d'aucune org :
 
@@ -291,6 +297,15 @@ Documentation des commandes : [hardis:work:new](https://sfdx-hardis.cloudity.com
 
 ## En cas de problème
 
+**Le panneau DevOps Pipeline ne montre qu'`integration`, et la Pull Request du hotfix pointe vers une boîte `preprod` isolée.**
+Le panneau dessine le pipeline à partir des fichiers de la branche sur laquelle se trouve VS Code,
+et vous êtes sur une branche qui date d'avant le [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) : elle ne connaît donc qu'une branche majeure.
+Rien n'est perdu : `uat`, `preprod` et `main` sont dans votre fork avec leur configuration. Cliquez
+sur le nom de la branche en bas à gauche de VS Code, choisissez `integration`, puis **Source
+Control** > **...** > **Pull**, et rafraîchissez le panneau. Si la Pull Request du hotfix liste bien
+plus d'un fichier, sa branche a été créée depuis ce même vieux commit : fermez-la, cliquez sur
+**Training: Level 3** > **Update my course**, puis de nouveau sur **Simulate my teammates**.
+
 **La Pull Request du hotfix cible `integration`.**
 La simulation l'ouvre vers `preprod`. Si vous voyez `integration`, vous regardez une autre Pull
 Request : vérifiez que sa branche source est `fix/US-045-installation-date-hotfix`.
@@ -314,7 +329,7 @@ le hotfix lui-même.
 
 ## Vérifiez votre travail
 
-**Training: Level 3** > **Check my work**.
+Welcome page > **Training: Level 3** > **Check my work**, puis choisissez **Lab 3.7**.
 
 Il cherche l'exemption `Cancelled` sur `preprod` et sur `main`, et la même ligne sur `integration` :
 le hotfix est parti, et le retrofit l'a ramené.

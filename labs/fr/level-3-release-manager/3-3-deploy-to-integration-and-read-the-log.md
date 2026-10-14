@@ -5,7 +5,7 @@ description: "Lisez un log de déploiement sfdx-hardis, trouvez ce qu'un joker .
 level: 3
 lab: 3
 lang: fr
-source_rev: "044a8eacb552ef9251cdc58fd3e6a95fde210d1f"
+source_rev: "46181112ca0f8c4fc2f70e1e0be02dbb5a59c7b3"
 screenshots:
   - annotated/vscode/pipeline-config-deployment--delta
   - annotated/vscode/orgs-manager
@@ -64,8 +64,9 @@ chaque couleur. Cliquez sur le marqueur pour ouvrir l'exécution.
 
 Un log de déploiement sfdx-hardis a toujours la même forme :
 
-**Un : l'authentification.** Quelle org, quel mécanisme. Après le [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md), il dit JWT. S'il dit un
-jour autre chose, c'est que quelque chose a changé sans que vous le changiez.
+**Un : l'authentification.** Quelle org, quel mécanisme. Sur `integration`, il dit auth URL : le
+raccourci du Niveau 1, que le [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) a laissé en place. Sur `preprod` et `main`, il dit JWT.
+S'il dit un jour autre chose, c'est que quelque chose a changé sans que vous le changiez.
 
 **Deux : ce qu'il faut déployer.** Le package qu'il a calculé, et d'où. C'est la partie intéressante
 et l'étape 3 en parle.
@@ -105,7 +106,7 @@ l'org doit vraiment être au commit où la pipeline la croit.
     **Pipeline Settings**, portée **Global Settings** **(1)**, onglet **Deployment** **(2)**.
     **Use Delta Deployment** **(3)** affiche **Disabled**.
 
-    L'application Helios fait une cinquantaine de composants : un déploiement complet coûte une
+    L'application Helios fait maintenant une soixantaine de composants : un déploiement complet coûte une
     minute et le delta n'économiserait rien tout en ajoutant une façon pour le cours d'échouer de
     manière déroutante sur une dépendance manquante. Activez-le quand un déploiement commence à vous
     coûter du temps réel, ce qui sur un vrai projet arrive vite. Il y a une deuxième clé pour les
@@ -114,7 +115,7 @@ l'org doit vraiment être au commit où la pipeline la croit.
     davantage, et c'est l'endroit le plus risqué où en envoyer moins.
 
 Trouvez la ligne `Components: N deployed` dans le log, sous *Deployment summary*. Sur une exécution
-standard de ce cours, elle est un peu au-dessus de cinquante. Comparez-la avec l'unique fichier de
+standard de ce cours, elle tourne autour de soixante. Comparez-la avec l'unique fichier de
 votre Pull Request. L'écart est le coût du delta désactivé, et c'est l'argument pour l'activer.
 
 ### 4. Savoir ce qu'est Smart Deploy, et ce qu'il n'est pas
@@ -134,7 +135,7 @@ Deux choses qu'on suppose souvent en faire partie et qui n'en font pas partie :
 - **Le nettoyage n'est pas un filtre de déploiement.** Il a tourné sur la machine d'un contributeur,
   au moment du commit. L'étape 3 de la section sous le capot ci-dessous en parle
 
-La réponse honnête à "pourquoi a-t-il déployé cinquante composants pour en changer un" est donc :
+La réponse honnête à "pourquoi a-t-il déployé soixante composants pour en changer un" est donc :
 parce que rien n'a été configuré pour l'en empêcher. C'est une décision de ce projet, pas quelque
 chose que l'outil fait pour vous.
 
@@ -288,14 +289,25 @@ System.QueryException: List has no rows for assignment to SObject
 Mariia a créé le groupe à la main dans sa propre org, dans Setup, comme on en crée un le plus
 souvent : rien dans sa Pull Request ne le crée.
 
-**Le commentaire Deployment Actions** de sa Pull Request liste les trois actions sous **Failed
-actions (1)** : ❌ pour celle qui a échoué, ⏸️ pour les deux qu'elle a arrêtées, chacune avec une
-case à cocher. Le tableau **Status by org branch** **(2)** dit la même chose dans la colonne
-`integration`.
+**Le commentaire de déploiement** de sa Pull Request s'ouvre sur **⚠️ Deployed to `integration`, but
+an action failed after the deployment** : l'org a les nouvelles métadonnées. Sous **❌ Failed
+action**, il montre la fin de la sortie du script, et sous **⏸️ Not run, waiting for the failed
+action** les deux autres.
+
+**Le commentaire Deployment Actions** de sa Pull Request résume tout dans son verdict, **In
+integration: ❌ 1 failed · ⏸️ 2 waiting**, et liste les trois actions sous **Needs you (1)** : ❌
+pour celle qui a échoué, ⏸️ pour les deux qu'elle a arrêtées, chacune avec une case à cocher. Le
+tableau **Status by org** **(2)** dit la même chose dans la colonne `integration`.
 
 ![Le commentaire Deployment Actions avec une action en échec et deux actions arrêtées](../../_assets/annotated/web/github-pr-deployment-actions-failed.png)
 
-**La DevOps Pipeline** : cliquez sur `integration`, puis sur l'onglet **Deployment Actions**. Les
+**La DevOps Pipeline** vous demande d'abord deux choses. Récupérez `integration` et faites un pull,
+depuis le nom de branche de la barre d'état et le panneau Source Control : le panneau lit les
+actions dans la branche que vous avez récupérée, et le fichier d'actions de Mariia est arrivé sur
+`integration` avec son merge. Cliquez ensuite sur **Refresh** dans la barre du haut du panneau,
+pour qu'il lise le déploiement qui vient d'échouer.
+
+Cliquez maintenant sur `integration`, puis sur l'onglet **Deployment Actions**. Les
 actions sont regroupées par Pull Request, numérotées dans l'ordre où elles tournent. La colonne
 **Status** **(1)** donne l'état de chaque action dans l'org d'`integration`, et celle en échec porte
 les boutons **Retry** et **Mark as done in integration** **(2)**. Le menu au bout de chaque ligne contient le reste,
@@ -322,9 +334,9 @@ La première action est juste : c'est l'org à qui il manque son groupe. Créez-
    la boîte Quick Find, et cliquez sur **New**
 2. **Label** `Crew Leads`, **Group Name** `Helios_Crew_Leads`, puis **Save**
 
-La définition de l'action est lue dans la branche que vous avez récupérée. Récupérez `integration`
-et faites un pull, depuis le nom de branche de la barre d'état et le panneau Source Control, pour
-que le fichier d'actions de Mariia soit là.
+La définition de l'action est lue dans la branche que vous avez récupérée, et c'est pourquoi
+l'étape 10 vous a fait récupérer `integration` et faire un pull. Si vous avez changé de branche
+depuis, revenez-y.
 
 De retour dans l'onglet **Deployment Actions**, cliquez sur **Retry** sur la ligne de **Put the
 delivery managers in the Crew Leads group**. La commande tourne dans VS Code, sur
@@ -421,7 +433,11 @@ faire prend vingt secondes : faites-la à la main, comme un release manager le f
 livraison ne peut pas attendre :
 
 1. Dans `helios-integration`, **Setup** > **Public Groups** > **Crew Leads** > **Edit**
-2. Ajoutez votre utilisateur dans **Selected Members**, puis **Save**
+2. Regardez **Selected Members**. Votre utilisateur y est déjà : la première action, que vous avez
+   relancée à l'étape 11, a mis chaque delivery manager dans le groupe, et vous en êtes un. Il n'y
+   a rien à ajouter, cliquez donc sur **Cancel**. Sur un vrai projet l'utilisateur de déploiement
+   est un utilisateur technique qu'aucune autre action n'ajoute : vous le passeriez ici dans
+   **Selected Members**, puis **Save**
 
 Ensuite, dans l'onglet **Deployment Actions**, ouvrez le menu de **Add the deployment user to the
 Crew Leads group** et cliquez sur **Mark as done in integration**. Rien ne s'ouvre : sfdx-hardis l'enregistre en
@@ -432,7 +448,7 @@ affiche **Done** dans l'onglet.
 Le prochain déploiement vers `integration` la saute. Dans `uat` et au-delà, elle tourne toujours,
 parce que personne ne l'y a faite.
 
-Cocher sa case dans la liste **Failed actions** du commentaire de la Pull Request fait la même
+Cocher sa case dans la liste **Needs you** du commentaire Deployment Actions fait la même
 chose, enregistrée par le prochain job sfdx-hardis : utilisez-la quand vous êtes sur GitHub plutôt
 que dans VS Code.
 

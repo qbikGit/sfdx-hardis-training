@@ -5,7 +5,7 @@ description: "Livrez une User Story Salesforce de bout en bout sans pas-à-pas :
 level: 1
 lab: 7
 lang: fr
-source_rev: "227087b70542c7fdd5f235321968b5154475be67"
+source_rev: "4305dc9121e535c8abeab94baf044c1cbbc44f11"
 screenshots:
   - annotated/web/github-star-sfdx-hardis
 depends_on:
@@ -20,7 +20,7 @@ depends_on:
 
 **Niveau** : 1 Contributeur, les bases
 
-**Durée** : ~25 min
+**Durée** : ~30 min<!-- observed --> (observé : médiane 32 min, 11 participants, le plus rapide 11 min)<!-- /observed -->
 
 **Vous allez** : refaire toute la boucle sans pas-à-pas, la seule façon de savoir si vous l'avez
 apprise.
@@ -115,8 +115,11 @@ Vous avez terminé le Niveau 1.
 Welcome page > **Training: Level 1** > **Claim my badge**.
 
 Il recontrôle d'abord le niveau entier et refuse de demander quoi que ce soit qui ne passe pas : une
-demande qui serait rejetée est une demande qui ne vaut pas la peine d'être ouverte. Puis il ouvre le
-formulaire de demande du repository de formation dans votre navigateur, avec le niveau, votre nom
+demande qui serait rejetée est une demande qui ne vaut pas la peine d'être ouverte. Il pose ensuite
+une question, votre nom d'utilisateur Trailblazer, car votre page de badge renvoie vers votre profil
+Trailhead : c'est la dernière partie de l'adresse de ce profil, et la commande dit où le trouver.
+Puis il ouvre le
+formulaire de demande du repository de formation dans votre navigateur, avec le niveau, ce nom
 d'utilisateur, votre fork (votre copie personnelle du repository du cours sur GitHub, par exemple
 `github.com/my-username/sfdx-hardis-training`) et vos reçus déjà remplis. Un champ reste vide :
 choisissez votre niveau dans la liste **Level**, car GitHub ne pré-remplit pas une liste déroulante
@@ -124,24 +127,24 @@ depuis un lien et le formulaire refuse d'être soumis tant qu'elle affiche *None
 trois cases et cliquez sur **Create**.
 
 Ces trois cases sont à vous de cocher, et rien ne les coche à votre place. Elles disent que votre
-fork (`github.com/my-username/sfdx-hardis-training`) est public et que votre pseudo GitHub devient
+fork est public et que votre pseudo GitHub devient
 public dans le repository de formation, ce qui est une décision à propos de votre nom plutôt qu'une
 formalité.
 
 !!! tip "Si ce cours vous a servi"
     [hardisgroupcom/sfdx-hardis](https://github.com/hardisgroupcom/sfdx-hardis) est le projet open
     source dont parle tout ce cours. Une étoile est ce qui permet à un projet comme celui-ci de
-    rester visible : ouvrez sa page et cliquez sur **Star** **(1)**, en haut à droite. Donnez une étoile si
+    rester visible : ouvrez sa page et cliquez sur **Star** **(1)**, à droite du nom du repository. Donnez une étoile si
     vous avez aimé ce cours !
 
     ![Le bouton Star du repository sfdx-hardis sur GitHub](../../_assets/annotated/web/github-star-sfdx-hardis.png)
 
-Un job clone ensuite votre fork (`github.com/my-username/sfdx-hardis-training`), rejoue sur lui tous
+Un job clone ensuite votre fork, rejoue sur lui tous
 les contrôles ci-dessus, et répond sur l'issue. Personne ne le relit à la main, cela prend donc
 généralement deux minutes. Si quelque chose ne se vérifie pas, le commentaire nomme le lab exact et
 ce qu'il a cherché, vous corrigez, et vous modifiez l'issue pour le relancer.
 
-Votre fork (`github.com/my-username/sfdx-hardis-training`) doit être **public** pour que l'audit
+Votre fork doit être **public** pour que l'audit
 puisse le lire. S'il est privé, la commande propose de le rendre public.
 
 !!! note "C'est un badge, pas une certification"
@@ -163,3 +166,13 @@ rendre obligatoire, le collègue qui a modifié le même flow que vous.
 Il est recommandé pour tout contributeur, et **obligatoire** avant le Niveau 3.
 
 [Continuer vers le Niveau 2 - Contributeur avancé](../level-2-contributor-advanced/index.md){ .md-button .md-button--primary }
+
+## Sur un vrai projet
+
+Votre équipe n'a pas encore de pipeline comme celle-ci ? En mettre une en place sur une org qui a
+des années d'histoire, c'est ce que [Cloudity](https://sfdx-hardis.cloudity.com/salesforce-devops-home/#get-help-from-cloudity), la société derrière sfdx-hardis et ce
+cours, fait pour ses clients : mise en place, formation et support. C'est l'une de ses pratiques, à
+côté d'Agentforce, de Revenue Cloud, de Field Service et [des autres](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1).
+
+[![Cloudity, conseil Salesforce : Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, intégration, services managés, DevOps](../../_assets/brand/cloudity-services-fr.png){ .cloudity-banner .wide-only loading=lazy }](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1)
+[![Cloudity, conseil Salesforce : Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, intégration, services managés, DevOps](../../_assets/brand/cloudity-services-fr-narrow.png){ .cloudity-banner .narrow-only loading=lazy }](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1)

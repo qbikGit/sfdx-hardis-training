@@ -5,7 +5,7 @@ description: "Modifiez un flow Salesforce existant, puis lisez correctement un c
 level: 2
 lab: 2
 lang: fr
-source_rev: "3a6b3f5a9738b10c6a54060e5dbed6422f08d256"
+source_rev: "10f4d9bb699ccad4fc34747a074abf59526ed9d0"
 screenshots:
   - annotated/vscode/package-xml-filtered
   - annotated/vscode/editor-field-file
@@ -31,7 +31,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~25 min
+**Durée** : ~35 min<!-- observed --> (Labs 2.1 et 2.2 observés ensemble : médiane 57 min, 14 participants, le plus rapide 28 min)<!-- /observed -->
 
 **Vous allez** : modifier un flow qui tourne déjà en production, rencontrer votre premier contrôle de
 déploiement en échec, lire l'erreur correctement, et trouver ce que votre package a oublié.
@@ -80,11 +80,13 @@ D'abord le champ dont le flow a besoin pour ne pas avertir deux fois. Dans `heli
 | Field Name    | `Crew_Warning_Sent__c` |
 | Default Value | Décoché                |
 
-Sur l'écran de sécurité au niveau du champ, cochez **Visible** pour **System Administrator**
-seulement (*Administrateur système* dans une org en français), et sur le dernier écran décochez **Installation Layout** : personne d'autre que le flow n'a
+L'écran de sécurité au niveau du champ arrive avec **Visible** coché pour presque tous les profils,
+comme dans le [Lab 1.4](../level-1-contributor-basics/1-4-build-a-custom-field-in-your-org.md) : videz la colonne avec la case de son en-tête, puis cochez **Visible** pour
+**System Administrator** seulement (*Administrateur système* dans une org en français). Sur le
+dernier écran, décochez **Installation Layout** : personne d'autre que le flow n'a
 besoin de cette case, elle ne va donc sur aucune page. Cette seule coche est pour vous, pas pour le
 flow : Flow Builder ne propose que les champs que la personne qui édite le flow peut lire, et sans
-elle **Crew Warning Sent** manque dans la liste de l'étape 2. Le flow lui-même tourne en mode système
+elle **Crew Warning Sent** manque dans les listes de Flow Builder ci-dessous. Le flow lui-même tourne en mode système
 et n'a besoin d'aucun droit.
 
 Puis le flow. **Setup > Flows**, ouvrez **Installation Crew Warning**. Il est actif, Flow Builder
@@ -95,8 +97,9 @@ ouvre donc la version qui tourne : chaque modification que vous faites est enreg
 
 Trois modifications, et l'image ci-dessus montre où chacune commence :
 
-1. Élément **Start** : cliquez sur **Edit** **(1)** dessus. Sous **Set Entry Conditions**, le flow
-   tourne déjà quand `Crew Size` n'est pas nul **(1)**. Cliquez sur **Add Condition** **(2)** et
+1. Élément **Start** : cliquez sur **Edit** **(1)** dessus. Un panneau s'ouvre, celui de la capture
+   suivante, et ses numéros sont les siens : sous **Set Entry Conditions**, le flow tourne déjà
+   quand `Crew Size` n'est pas nul **(1)**. Cliquez sur **Add Condition** **(2)** et
    ajoutez la seconde, `Panels Required`, **Is Null**, `False`. Ce panneau n'a pas de bouton
    **Done** : la condition est gardée au fil de la saisie, et le **X** **(3)** en haut à droite
    ferme le panneau
@@ -141,8 +144,10 @@ nouvelle version.
     en avait déjà un, et votre nouvel élément le suit.
 
 Testez : ouvrez une installation, mettez `Panels Required` à 40 et `Crew Size` à 2, enregistrez. Une
-tâche apparaît dans son **Activity**. Enregistrez à nouveau : pas de deuxième tâche. C'est la story
-qui fonctionne, dans votre org. La case à cocher elle-même reste invisible : aucun permission set ne
+tâche apparaît à droite de l'enregistrement, dans le panneau d'activités sous la **Panel delivery
+timeline**, dans sa section **Upcoming & Overdue**. Cliquez sur **Refresh** dans ce panneau si elle
+tarde à s'afficher. Enregistrez à nouveau : pas de deuxième tâche. C'est la story qui fonctionne,
+dans votre org. La case à cocher elle-même reste invisible : aucun permission set ne
 l'accorde, parce que personne d'autre que le flow n'en a besoin, et la seule personne qui peut la lire
 est l'administrateur qui a construit le flow.
 
@@ -165,8 +170,9 @@ Poussez, ouvrez la Pull Request vers `integration` dans votre fork (votre copie 
 repository du cours sur GitHub, par exemple `github.com/my-username/sfdx-hardis-training`), et
 attendez.
 
-Le contrôle échoue, et le commentaire sfdx-hardis sur la Pull Request nomme le composant sous
-**Deployment errors** **(1)** :
+Le contrôle échoue. Le commentaire sfdx-hardis sur la Pull Request s'ouvre sur **❌ Cannot merge
+into `integration`: 1 deployment error**, et nomme le composant sous **❌ Deployment errors**
+**(1)** :
 
 ![Le commentaire sfdx-hardis d'un contrôle de déploiement en échec](../../_assets/annotated/web/github-pr-check-failed.png)
 
@@ -175,12 +181,15 @@ Installation_Crew_Warning field integrity exception: unknown (The field "Crew_Wa
 for the object "Installation__c" doesn't exist.)
 ```
 
-Sous **Flow changes** **(2)**, le commentaire pointe vers un deuxième commentaire à lui : le diff
-visuel du flow. Il dessine le flow, et colore ce que votre story a modifié. Le nouvel élément
-**Mark Warning Sent** est en vert **(1)**, et les tableaux sous le schéma marquent chaque propriété
-modifiée avec un carré rouge pour l'ancienne valeur et un vert pour la nouvelle : la description
-**(2)**, la formule **(3)**. Un relecteur lit votre modification de flow là, sans ouvrir Flow Builder
-ni son XML.
+Plus bas, la ligne repliée **📋 1 component failed, ... would change in the org** **(2)** ouvre un
+tableau des composants, par type, avec votre flow dans son groupe **❌ Failed**. Un flow est une
+métadonnée comme les autres dans ce commentaire. Ce qu'il a en plus, c'est un deuxième commentaire à
+lui, publié juste en dessous : **🔀 Flow Installation Crew Warning**, le diff visuel du flow. Il
+dessine le flow, et colore ce que votre story a modifié. Le nouvel élément **Mark Warning Sent** est
+en vert **(1)**. Au-dessus du schéma, un tableau **properties changed** donne chaque propriété
+modifiée avec sa valeur avant et après : la description **(2)**, la formule **(3)**. Les tableaux
+complets du flow sont repliés sous **All properties and elements**. Un relecteur lit votre
+modification de flow là, sans ouvrir Flow Builder ni son XML.
 
 ![Le diff visuel du flow Installation Crew Warning, publié sur la Pull Request](../../_assets/annotated/web/github-pr-flow-diff.png)
 
@@ -200,7 +209,7 @@ puis **Package XML** **(2)**, comme au [Lab 1.5](../level-1-contributor-basics/1
 
 ![Le menu Deployment packages du panneau DevOps Pipeline, avec Package XML](../../_assets/annotated/vscode/pipeline-packages-menu--package-xml.png)
 
-Tapez `Crew_Warning` dans sa zone de filtre **(1)**. Il reste une ligne, **Flow** **(2)** : le
+Tapez `crew_warning` dans sa zone de filtre **(1)**. Il reste une ligne, **Flow** **(2)** : le
 package porte votre flow. Il n'y a aucune ligne **CustomField** : le package ne porte pas
 `Installation__c.Crew_Warning_Sent__c`.
 

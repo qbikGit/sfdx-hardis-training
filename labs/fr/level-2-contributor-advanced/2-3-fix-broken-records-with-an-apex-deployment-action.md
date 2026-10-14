@@ -5,7 +5,7 @@ description: "Rendre un champ obligatoire se déploie au vert et casse les enreg
 level: 2
 lab: 3
 lang: fr
-source_rev: "af0ed2794b7fc66b266d5280832d5a890ceda29f"
+source_rev: "4d75e753f59abe54ca136f71871766e142010aa3"
 screenshots:
   - annotated/vscode/pipeline-cards--my-pull-request
   - annotated/vscode/pipeline-cards--new-user-story
@@ -24,7 +24,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~30 min
+**Durée** : ~45 min<!-- observed --> (observé : médiane 48 min, 12 participants, le plus rapide 16 min)<!-- /observed -->
 
 **Vous allez** : rencontrer un échec qu'aucune correction de métadonnée ne résout, et découvrir
 l'outil qui existe pour cela : une deployment action.
@@ -91,8 +91,8 @@ La correction prend une minute, et l'org l'a déjà faite : dans `helios-dev` le
 des deux permission sets à l'instant où le champ est devenu obligatoire. Faites-en un retrieve :
 **Commit changes**, cochez `Helios_Delivery_Crew` et `Helios_Delivery_Manager`, récupérez. Source
 Control montre chacun d'eux perdant son entrée `Crew_Size__c` et rien d'autre. Commitez, **Save /
-Publish** à nouveau. Le commentaire sfdx-hardis le disait même, sous chaque erreur, avec un lien vers
-la règle.
+Publish** à nouveau. Le commentaire sfdx-hardis le disait même, dans l'astuce repliée sous chaque
+erreur, avec un lien vers la règle.
 
 !!! note "C'est une bonne erreur"
     Elle est précise, elle nomme les deux composants fautifs, et la correction est évidente une fois
@@ -247,8 +247,13 @@ script Apex que vous avez créés à l'étape 5, et l'action que l'éditeur a é
 `scripts/actions/`, dans un fichier nommé d'après votre Pull Request. Commitez-les tous, puis
 **Save / Publish**.
 
-Le contrôle repasse, et son commentaire a maintenant un tableau **Post-deployment Actions Results** :
-votre remplissage, **skipped**, parce que c'est le job de validation. Mergez.
+Le contrôle repasse, et son commentaire a maintenant une ligne **Deployment actions** dans son
+tableau : votre remplissage, **🕒 1 after the merge**, parce que c'est le job de validation et qu'il
+ne change rien dans l'org. Ouvrez la section repliée **🛠️ Deployment actions of this job (1)** en
+dessous : le remplissage, **after** le déploiement, avec la raison **Runs after the merge only**.
+
+**Mergez maintenant la Pull Request.** Sur sa page GitHub, choisissez **Squash and merge**, puis
+cliquez sur **Squash and merge** et **Confirm squash and merge**, comme au [Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md).
 
 Le job de déploiement vers `integration` le lance, pour de vrai, juste **après** le déploiement :
 ouvrez son log dans l'onglet **Actions** et vous y trouvez le déploiement, puis l'action qui démarre,
@@ -310,6 +315,15 @@ Documentation de la commande : [hardis:project:deploy:smart](https://sfdx-hardis
 - Aucune étape manuelle effectuée par qui que ce soit dans quelque org que ce soit
 
 ## En cas de problème
+
+**Le fichier d'actions s'appelle `.sfdx-hardis.draft.yml`, ou le check s'arrête sur *Draft deployment actions file found*.**
+Vous avez ajouté l'action alors que le panneau ne connaissait aucune Pull Request pour votre
+branche : la carte **My Pull Request** indiquait *Pull Request not created yet*, et l'action a été
+gardée dans un brouillon. Le pipeline ne lit que `scripts/actions/.sfdx-hardis.` suivi du numéro de
+la Pull Request et de `.yml` : un brouillon, ou un fichier renommé à votre idée, n'est jamais
+exécuté. Une fois votre Pull Request créée, rouvrez le panneau **DevOps Pipeline** et cliquez sur
+**Refresh** : il renomme le brouillon d'après votre Pull Request et vous le dit dans une
+notification. Committez le fichier renommé, puis **Save / Publish**.
 
 **L'action n'apparaît pas dans l'onglet Deployment Actions.**
 Le panneau lit la Pull Request depuis votre fork (votre copie personnelle du repository du cours sur

@@ -5,7 +5,7 @@ description: "Rapatriez vos modifications d'org dans Git avec le Metadata Retrie
 level: 1
 lab: 5
 lang: fr
-source_rev: "3a6b3f5a9738b10c6a54060e5dbed6422f08d256"
+source_rev: "c345892705eac1635f8f23b7deec68fe19d4d4ae"
 screenshots:
   - annotated/vscode/pipeline-cards-level1--commit-changes
   - annotated/vscode/metadata-retriever-recent-changes--find
@@ -29,7 +29,7 @@ depends_on:
 
 **Niveau** : 1 Contributeur, les bases
 
-**Durée** : ~20 min
+**Durée** : ~20 min<!-- observed --> (observé : médiane 24 min, 11 participants, le plus rapide 10 min)<!-- /observed -->
 
 **Vous allez** : rapatrier vos modifications d'org dans le repository, décider lesquelles appartiennent
 à votre story, et pousser une branche prête à être relue.
@@ -322,11 +322,11 @@ qui a effectué, dans cet ordre :
 3. **Retiré des Profiles les permissions utilisateur** listées sous `autoRemoveUserPermissions`, que
    ce projet a décidé de ne jamais laisser voyager d'une org à l'autre par un déploiement. Les
    Profiles uniquement : un Permission Set garde tout ce qu'on lui a donné
-4. **Commité ce qu'il a modifié**, sous `chore(sfdx-hardis): update package content` et
-   `chore(sfdx-hardis): clean sfdx project`. Ces commits sont ceux de l'outil, pas les vôtres : le
-   vôtre est celui que vous avez écrit à l'étape 4
-5. **Poussé** la branche sur votre fork (votre copie personnelle du repository du cours sur GitHub, par
-   exemple `github.com/my-username/sfdx-hardis-training`)
+4. **Commité ce qu'il a modifié**, sous `chore(sfdx-hardis): update package content`, et sous
+   `chore(sfdx-hardis): clean sfdx project` quand le nettoyage a modifié un fichier. Sur cette story
+   il n'a rien modifié, votre branche gagne donc un seul commit. Ces commits sont ceux de l'outil,
+   pas les vôtres : le vôtre est celui que vous avez écrit à l'étape 4
+5. **Poussé** la branche sur votre fork
 
 Chacune de ces étapes est de la configuration, pas de la magie. Tout ce qu'il a fait est dans
 `config/.sfdx-hardis.yml`, et un projet qui veut un autre comportement change ce fichier.
@@ -383,14 +383,14 @@ plus. Lisez les règles de nettoyage dans le bloc Sous le capot ci-dessus. Rien 
 org : le nettoyage change ce qui est commité, jamais ce qui est dans Salesforce.
 
 **Le push est rejeté.**
-Votre fork (`github.com/my-username/sfdx-hardis-training`) a bougé, en général parce que vous avez
+Votre fork a bougé, en général parce que vous avez
 réinitialisé un niveau. Tirez d'abord : panneau Source Control, menu **...**, **Pull**.
 
 ## Vérifiez votre travail
 
 Welcome page > **Training: Level 1** > **Check my work**, puis choisissez le **Lab 1.5**.
 
-Il lit la copie de votre branche dans votre fork (`github.com/my-username/sfdx-hardis-training`),
+Il lit la copie de votre branche dans votre fork,
 celle que Save / Publish a poussée : le champ, le permission set qui l'accorde, et la présentation de
 page qui le porte. Un commit resté sur votre machine ne compte pas, parce que personne d'autre ne
 peut le voir.

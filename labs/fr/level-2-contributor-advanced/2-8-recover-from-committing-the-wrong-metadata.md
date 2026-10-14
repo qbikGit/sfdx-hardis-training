@@ -5,17 +5,17 @@ description: "Vous avez publié bien plus que votre story. Voyez ce que cela fai
 level: 2
 lab: 8
 lang: fr
-source_rev: "535933b2169df3a48c9e413e1dd771eeb28b3f29"
+source_rev: "326367933807a5b666b0837389619ca9b945d915"
 screenshots:
   - annotated/vscode/pipeline-cards--new-user-story
   - annotated/vscode/metadata-retriever-recent-changes--select-all
-  - annotated/vscode/sidebar
+  - annotated/vscode/sidebar-commands-collapsed--reset-selection
   - annotated/vscode/pipeline-cards--save-publish
 depends_on:
-  commands: [hardis:work:resetselection, hardis:work:save]
-  flags: []
+  commands: [hardis:mdapi:read, hardis:work:resetselection, hardis:work:save]
+  flags: [--active-only]
   config: []
-  panels: [commandExecution, packageXml]
+  panels: [metadataRetriever, commandExecution, packageXml]
   docs: [salesforce-devops-publish-user-story, salesforce-devops-manual-repo-clean]
 ---
 
@@ -23,7 +23,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~20 min
+**Durée** : ~25 min<!-- observed --> (observé : médiane 27 min, 5 participants, le plus rapide 16 min)<!-- /observed -->
 
 **Vous allez** : sur-sélectionner exprès au moment de publier, voir ce que cela fait à une Pull
 Request, et apprendre les deux chemins de récupération.
@@ -59,7 +59,8 @@ déplacez `Crew Size` au-dessus d'`Install Date`.
 
 Ouvrez maintenant **Commit changes**, cherchez les modifications récentes, et cette fois cliquez sur
 la case de l'**en-tête du tableau** **(1)**, qui sélectionne toutes les lignes d'un coup.
-Récupérez-les toutes, commitez-les toutes depuis **Source Control**, publiez et poussez.
+Récupérez-les toutes, commitez-les toutes depuis **Source Control**, publiez, poussez, et ouvrez la Pull Request vers `integration`, comme pour
+toute story. Ne la mergez pas.
 
 ![Le Metadata Retriever, avec toutes les lignes sélectionnées](../../_assets/annotated/vscode/metadata-retriever-recent-changes--select-all.png)
 
@@ -70,12 +71,13 @@ nomme : décochez ces lignes et relancez la récupération.
 ### 2. Regarder ce que vous avez fait
 
 Regardez le rapport **Git Delta package.xml** que la publication a proposé : bien plus que l'unique
-présentation de page que votre story a modifiée. Ouvrez la Pull Request et lisez le diff.
+présentation de page que votre story a modifiée. Sur GitHub, ouvrez l'onglet
+**Files changed** de votre Pull Request et lisez le diff.
 
 Au minimum il y a **un profil**, `Admin`, le profil System Administrator. Le repository le porte
-court, quelques lignes, et il est revenu plus long de plusieurs centaines de lignes : chaque champ que
-vous avez créé dans Setup depuis le Niveau 1 a donné à ce profil une sécurité au niveau du champ, et
-une récupération de toute l'org ramène tout cela avec. Ce qui vient d'autre dépend de ce qu'a vécu
+court, quelques lignes, et il est revenu plus long de plusieurs centaines de lignes : le Metadata
+Retriever récupère un profil en entier, chaque permission, onglet et mise en page qu'il a dans
+votre org, et rien de tout cela n'est votre story. Ce qui vient d'autre dépend de ce qu'a vécu
 votre org, et une récupération de toute l'org sur un vrai projet en emporte généralement une partie
 :
 
@@ -100,7 +102,7 @@ toutes les commandes sfdx-hardis, qu'un panneau les expose ou non.
 
 Ouvrez-la, puis **CI/CD (simple)** **(1)**, puis **Reset selected list of items to merge** **(2)**.
 
-![La liste des commandes SFDX HARDIS, avec le groupe CI/CD (simple) ouvert](../../_assets/annotated/vscode/sidebar.png)
+![La liste des commandes SFDX HARDIS, avec le groupe CI/CD (simple) ouvert](../../_assets/annotated/vscode/sidebar-commands-collapsed--reset-selection.png)
 
 Elle fait plus que ce que son nom laisse entendre, et savoir exactement quoi vous évite de la défaire
 deux fois. En une passe, elle :
@@ -160,6 +162,9 @@ Le rapport **Git Delta package.xml** ne nomme plus qu'un composant, la présenta
 publication pousse par-dessus l'ancienne branche sans demander : la réinitialisation l'a autorisé. La
 Pull Request montre maintenant un fichier, votre présentation de page.
 
+Attendez que son check passe au vert, puis mergez-la avec **Squash and merge**, comme toute story :
+**Check my work** cherche la modification de la présentation de page dans `integration`.
+
 ### 6. L'habitude qui évite cela
 
 Trois vérifications, une dizaine de secondes chacune, avant chaque push :
@@ -206,7 +211,7 @@ Documentation des commandes : [hardis:work:resetselection](https://sfdx-hardis.c
 ## Ce que vous devez voir
 
 - Le rapport **Git Delta package.xml** ne nommant qu'un seul `Layout`
-- Un diff de Pull Request d'un seul fichier : la présentation de page
+- Un diff de Pull Request d'un seul fichier, la présentation de page, puis cette Pull Request mergée
 - Votre modification de présentation de page toujours présente dans `helios-dev`
 
 ## En cas de problème

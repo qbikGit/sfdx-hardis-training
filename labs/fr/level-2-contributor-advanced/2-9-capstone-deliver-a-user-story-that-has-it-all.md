@@ -5,7 +5,7 @@ description: "Livrez une User Story Salesforce avec une dépendance à vérifier
 level: 2
 lab: 9
 lang: fr
-source_rev: "227087b70542c7fdd5f235321968b5154475be67"
+source_rev: "9b11a4fe7b1326ad52e54eeef6eefb81354aef3b"
 screenshots:
   - annotated/web/github-star-megalinter
 depends_on:
@@ -20,7 +20,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~30 min
+**Durée** : ~1 h 40<!-- observed --> (observé : médiane 1 h 44, 3 participants, le plus rapide 1 h 16)<!-- /observed -->
 
 **Vous allez** : livrer une story qui contient une dépendance à vérifier, une deployment action de
 données et un collègue qui travaille sur le même permission set, sans pas-à-pas.
@@ -74,7 +74,8 @@ savez déjà traiter les trois.
    ce permission set, et le chargement de données du deuxième piège en a besoin, comme au [Lab 2.4](2-4-ship-reference-data-and-a-batch-with-deployment-actions.md)
 6. **Faites un retrieve** : **Commit changes**, **Recent Changes**, et prenez ce que vous avez fait
    et rien d'autre. Commitez
-7. **Publiez, Pull Request, vert, merge**
+7. **Publiez, Pull Request, vert, merge**, dans l'ordre que demandent les trois points
+   ci-dessous : le coéquipier passe avant votre Pull Request, l'action de données après
 
 ### Les trois choses qui vous attendent
 
@@ -151,9 +152,10 @@ Neuf contrôles.
 
 Welcome page > **Training: Level 2** > **Claim my badge**.
 
-Comme au Niveau 1 : il recontrôle tout ce qui précède et ouvre le formulaire de demande déjà rempli.
-Choisissez votre niveau dans la liste **Level**, qu'un lien ne peut pas pré-remplir, puis cochez les
-trois cases et soumettez.
+Comme au Niveau 1 : il recontrôle tout ce qui précède, demande votre nom d'utilisateur Trailblazer,
+la dernière partie de l'adresse de votre profil Trailhead, et ouvre le formulaire de demande déjà
+rempli. Choisissez votre niveau dans la liste **Level**, qu'un lien ne peut pas pré-remplir, puis
+cochez les trois cases et soumettez.
 
 Une demande de Niveau 2 rejoue **aussi l'audit du Niveau 1**, parce que le badge dit que vous savez
 faire les deux. Si vous avez sauté le Niveau 1, c'est là qu'il le dira, et la commande le dit avant
@@ -162,8 +164,8 @@ que le formulaire s'ouvre.
 !!! tip "Si ce cours vous a servi"
     [oxsecurity/megalinter](https://github.com/oxsecurity/megalinter) est le moteur de linting
     derrière la barrière de qualité que vos Pull Requests ont traversée. Une étoile est ce qui permet
-    à un projet open source de rester visible : ouvrez sa page et cliquez sur **Star** **(1)**, en haut
-    à droite. Donnez une étoile si vous avez aimé ce cours !
+    à un projet open source de rester visible : ouvrez sa page et cliquez sur **Star** **(1)**, à droite
+    du nom du repository. Donnez une étoile si vous avez aimé ce cours !
 
     ![Le bouton Star du repository MegaLinter sur GitHub](../../_assets/annotated/web/github-star-megalinter.png)
 
@@ -188,3 +190,14 @@ Le projet auquel vous avez contribué s'arrête à `integration` : pas d'UAT, pa
 d'authentification de CI correcte, pas de monitoring. Le Niveau 3, c'est le terminer.
 
 [Continuer vers le Niveau 3 - Release Manager](../level-3-release-manager/index.md){ .md-button .md-button--primary }
+
+## Sur un vrai projet
+
+Tout ce que le Niveau 2 a mis sur votre route arrive aussi sur les vrais projets, en général le jour
+d'une release. [Cloudity](https://sfdx-hardis.cloudity.com/salesforce-devops-home/#get-help-from-cloudity), la société derrière sfdx-hardis et ce cours, forme les équipes
+de delivery et reste joignable après la mise en production. Elle mène aussi ses propres projets
+Salesforce, d'Agentforce et Revenue Cloud à Field Service :
+[voir ce qu'elle fait](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2).
+
+[![Cloudity, conseil Salesforce : Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, intégration, services managés, DevOps](../../_assets/brand/cloudity-services-fr.png){ .cloudity-banner .wide-only loading=lazy }](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2)
+[![Cloudity, conseil Salesforce : Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, intégration, services managés, DevOps](../../_assets/brand/cloudity-services-fr-narrow.png){ .cloudity-banner .narrow-only loading=lazy }](https://cloudity.com/fr/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2)

@@ -23,7 +23,7 @@ depends_on:
 
 **Level**: 1 Contributor basics
 
-**Time**: ~15 min
+**Time**: ~10 min<!-- observed --> (observed: median 13 min, 10 learners, fastest 9 min)<!-- /observed -->
 
 **You will**: build US-014 the way an admin builds anything, by clicking in Salesforce Setup, and
 check it against real records.
@@ -37,7 +37,8 @@ your own org, never in the shared one.
 ## Before you start
 
 - [ ] [Lab 1.3](1-3-start-a-user-story-on-a-git-branch.md) finished: you are on `features/US-014-panels-required`
-- [ ] The Status section of the sfdx-hardis panel shows `helios-dev` as the current org
+- [ ] The Status section of the sfdx-hardis panel shows the username of `helios-dev` as the current
+      org: the one on the `helios-dev` row of **Orgs Manager**, since that section never shows an alias
 
 ## Steps
 
@@ -147,9 +148,9 @@ Empty fields prove nothing. Put a number in.
 
 The **Installations** tab **(1)** is how you get back to this list from anywhere in the app. On the
 right of the record sits the **Panel delivery timeline** **(2)**, which lists the pallets booked for
-this installation with their quantities. The picture was taken before this story existed, on an
-installation with no pallet booked, so there is no Panels Required in its column either. Most
-installations have two or three pallets.
+this installation with their quantities. The picture was taken before this story existed, so
+there is no Panels Required in its column yet. The installation it shows has two pallets, 23 and 16
+panels: 39 is the number you would type there. Most installations have two or three.
 
 1. On `INST-00001`, click the pencil at the right of **Panels Required**, type the number the
    timeline adds up to, and click **Save** at the bottom of the page. This page has no **Edit**

@@ -107,6 +107,8 @@ export function run(command, args, options = {}) {
     stdio: options.capture ? "pipe" : "inherit",
     shell: WINDOWS,
     encoding: "utf8",
+    // What the command reads on stdin, for a text too long for a command line
+    ...(options.input !== undefined ? { input: options.input } : {}),
     env: { ...process.env, ...(options.env || {}) }
   });
   return {
@@ -225,6 +227,22 @@ export function git(args, options = {}) {
 
 export function gitOut(args) {
   return run("git", args, { capture: true, quiet: true }).stdout.trim();
+}
+
+/**
+ * Removes a temporary folder a command wrote for one sf call. On Windows the sf
+ * process can still hold a file of it for a moment after it exits, and the
+ * removal then fails with EPERM: it is tried again briefly, and a folder that
+ * stays is left to the system temp cleanup rather than failing the command that
+ * already did its work. The same goes for a temporary file.
+ */
+export function removeTempDir(dir) {
+  try {
+    // rmSync waits synchronously between attempts: keep the budget under a second
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 150 });
+  } catch (e) {
+    info(c.dim(`  Left in the temp folder, still in use: ${dir} (${e.code || e.message})`));
+  }
 }
 
 // ------------------------------------------------------------------ prompts
@@ -519,12 +537,36 @@ export function writeProgress(progress) {
   fs.writeFileSync(path.join(ROOT, PROGRESS_FILE), JSON.stringify(progress, null, 2) + "\n", "utf8");
 }
 
+/**
+ * When a lab passed for the first time, or null when it never did.
+ *
+ * The receipt of a lab keeps that moment. Check my work runs over the whole
+ * level, and Claim my badge does too, so a receipt stamped at every run said
+ * when the claim was made and nothing about the lab.
+ */
+export function firstPassedAt(id) {
+  const receipt = (readProgress().receipts || []).find((r) => r.id === id);
+  const at = receipt ? receipt.firstPassedAt || receipt.at : null;
+  return at && !Number.isNaN(Date.parse(at)) ? at : null;
+}
+
 export function recordReceipt(receipt) {
   const progress = readProgress();
+  const previous = (progress.receipts || []).find((r) => r.id === receipt.id);
   progress.receipts = (progress.receipts || []).filter((r) => r.id !== receipt.id);
-  progress.receipts.push(receipt);
+  progress.receipts.push({ ...receipt, firstPassedAt: (previous && (previous.firstPassedAt || previous.at)) || receipt.at });
   progress.receipts.sort((a, b) => a.id.localeCompare(b.id));
   writeProgress(progress);
+}
+
+/** Forgets the receipts of a level and of the ones after it: Reset this level starts them over. */
+export function clearReceipts(fromLevel) {
+  const progress = readProgress();
+  const kept = (progress.receipts || []).filter((r) => Number(String(r.id).split(".")[0]) < fromLevel);
+  if (kept.length !== (progress.receipts || []).length) {
+    progress.receipts = kept;
+    writeProgress(progress);
+  }
 }
 
 // ------------------------------------------------------------------ args
@@ -738,7 +780,7 @@ export function stamp() {
  * commits between" or "head ref not found". The body goes through a file, which
  * is removed whatever happens.
  */
-export function openPullRequest({ slug, base, branch, title, body }) {
+export function openPullRequest({ slug, base, branch, title, body, draft = false }) {
   if (!slug || !hasGh()) {
     return null;
   }
@@ -749,7 +791,7 @@ export function openPullRequest({ slug, base, branch, title, body }) {
     for (let attempt = 1; attempt <= 3 && !url; attempt++) {
       // Captured: the address of the Pull Request is what the learner opens
       // next, and what gh prints goes nowhere they can see in the panel
-      const pr = run("gh", ["pr", "create", "--repo", slug, "--base", base, "--head", branch, "--title", title, "--body-file", bodyFile], {
+      const pr = run("gh", ["pr", "create", "--repo", slug, "--base", base, "--head", branch, "--title", title, "--body-file", bodyFile, ...(draft ? ["--draft"] : [])], {
         capture: true,
         quiet: true
       });

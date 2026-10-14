@@ -20,7 +20,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~30 min
+**Time**: ~1 h 40<!-- observed --> (observed: median 1 h 44, 3 learners, fastest 1 h 16)<!-- /observed -->
 
 **You will**: deliver one story that contains a dependency to check, a data deployment action and a
 teammate working on the same permission set, with no step-by-step.
@@ -73,7 +73,8 @@ handle all three.
    data load of the second trap needs it, as in [Lab 2.4](2-4-ship-reference-data-and-a-batch-with-deployment-actions.md)
 6. **Retrieve it**: **Commit changes**, **Recent Changes**, and take what you made and nothing
    else. Commit it
-7. **Publish, Pull Request, green, merge**
+7. **Publish, Pull Request, green, merge**, in the order the three things below ask for: the
+   teammate comes before your Pull Request, the data action after it
 
 ### The three things waiting for you
 
@@ -146,8 +147,9 @@ Nine checks.
 
 Welcome page > **Training: Level 2** > **Claim my badge**.
 
-Same as Level 1: it re-checks everything here and opens the claim form filled in. Pick your level
-in the **Level** dropdown, which a link cannot prefill, then tick the three boxes and submit.
+Same as Level 1: it re-checks everything here, asks for your Trailblazer username, the last part of
+the address of your Trailhead profile, and opens the claim form filled in. Pick your level in the
+**Level** dropdown, which a link cannot prefill, then tick the three boxes and submit.
 
 A Level 2 claim re-runs the **Level 1 audit as well**, because the badge says you can do both. If
 you skipped Level 1, that is where it will say so, and the command says it before the form opens.
@@ -155,7 +157,7 @@ you skipped Level 1, that is where it will say so, and the command says it befor
 !!! tip "If the course helped you"
     [oxsecurity/megalinter](https://github.com/oxsecurity/megalinter) is the linting engine behind
     the quality gate your Pull Requests went through. A star is how an open source project stays
-    visible: open its page and click **Star** **(1)**, at the top right. Give it a star if you liked this
+    visible: open its page and click **Star** **(1)**, on the right of the repository name. Give it a star if you liked this
     course!
 
     ![The Star button of the MegaLinter repository on GitHub](../../_assets/annotated/web/github-star-megalinter.png)
@@ -179,3 +181,13 @@ The project you have been contributing to stops at `integration`: no UAT, no pro
 CI authentication, no monitoring. Level 3 is finishing it.
 
 [Continue to Level 3 - Release Manager](../level-3-release-manager/index.md){ .md-button .md-button--primary }
+
+## On a real project
+
+Everything Level 2 put in your way happens on real projects too, usually on the day of a release.
+[Cloudity](https://sfdx-hardis.cloudity.com/salesforce-devops-home/#get-help-from-cloudity), the company behind sfdx-hardis and this course, trains delivery teams and
+stays reachable after go-live. It also runs Salesforce projects of its own, from Agentforce and
+Revenue Cloud to Field Service: [see what it does](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2).
+
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en.png){ .cloudity-banner .wide-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2)
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en-narrow.png){ .cloudity-banner .narrow-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-2)

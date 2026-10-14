@@ -44,6 +44,8 @@ exactly the part worth a person's time.
 
 ### 1. Open the Documentation Workbench
 
+On the Welcome page, click the **Documentation Workbench** card.
+
 ![The Documentation Workbench, with the parts to include, the Generate button and the deploy targets](../../_assets/annotated/vscode/documentation-workbench--generate-and-deploy.png)
 
 Everything in this lab happens on this one screen. Three parts of it matter:
@@ -76,7 +78,9 @@ Four kinds of page, and they are worth knowing apart:
 | **Apex pages**                | Classes, their methods, their ApexDoc                                                                           | A developer                                                               |
 | **Package and profile pages** | What is installed, what the permission sets grant                                                               | An audit                                                                  |
 
-Open `docs/objects/Installation__c.md`. Every field you and your teammates created across three
+Open `docs/objects/Installation__c.md`. VS Code shows a markdown file as its source: to read it as
+a page, press `Ctrl+Shift+V` (`Cmd+Shift+V` on a Mac), or right-click the tab of the file and choose
+**Open Preview**. Do the same for every page this lab opens. Every field you and your teammates created across three
 levels is there, with the descriptions you wrote in Setup.
 
 **Fields with no description produce a row with a blank cell.** That is the honest output, and it is
@@ -203,9 +207,10 @@ the diagram. Report it as an issue on sfdx-hardis if you hit one.
 **The object pages are almost empty.**
 The sources are there but the descriptions are not. That is the org, not the tool.
 
-**The docs folder is enormous and the Pull Request is unreviewable.**
-Expected the first time. Say so in the Pull Request description. Subsequent regenerations produce
-small diffs.
+**Source Control lists hundreds of new files under `docs/`.**
+It should list none: this course keeps `docs/` and `mkdocs.yml` out of git. Check that `.gitignore`
+still lists them, and do not commit them. A project that does commit its documentation gets an
+enormous first Pull Request, and small ones after it.
 
 ## Check your work
 
