@@ -1,0 +1,9 @@
+commandsPostDeploy:
+  - id: 133416f2-33f8-4347-a688-4363ddd34866
+    label: insert data
+    type: data
+    command: ""
+    parameters:
+      sfdmuProject: HandoverTemplates
+    runOnlyOnceByOrg: true
+    context: process-deployment-only
