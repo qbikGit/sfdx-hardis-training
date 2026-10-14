@@ -9,7 +9,7 @@ source_rev: ""
 screenshots:
   - annotated/salesforce/validation-rule
   - annotated/vscode/welcome-custom-menu-3
-  - annotated/web/github-pr-files
+  - annotated/web/github-pr-files-hotfix
   - annotated/web/github-pr-merge
   - annotated/vscode/devops-pipeline-level3--release-to-prod
   - annotated/web/github-pr-deployed
@@ -111,7 +111,7 @@ was cut from `preprod`, which is what **New User Story** does when the target is
 Open the Pull Request, **Files changed** **(1)**. One file, the validation rule **(2)**, and the
 change is the added line **(3)**:
 
-![The Files changed tab of a Pull Request](../../_assets/annotated/web/github-pr-files.png)
+![The Files changed tab of the hotfix Pull Request, one validation rule and one added line](../../_assets/annotated/web/github-pr-files-hotfix.png)
 
 ```
   NOT(ISPICKVAL(Status__c, "Cancelled"))
@@ -130,7 +130,7 @@ again, and nothing else changes.** That is a hotfix.
 
 When the check is green, merge it with **Squash and merge**, from the arrow beside **Merge pull
 request** **(1)**: Romain's branch is a fix, and a fix is squashed like every User Story
-([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)). The promotion into `main` that follows is merged, not squashed.
+([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)), which the **How to merge** line of the green check comment says too. The promotion into `main` that follows is merged, not squashed.
 
 ![Merging a Pull Request on GitHub](../../_assets/annotated/web/github-pr-merge.png)
 
@@ -155,10 +155,11 @@ the same gate, on the real org, taking two minutes.
 ### 6. Confirm it is live
 
 Merge, and watch the **Process Deployment (sfdx-hardis)** run on `main`. When it finishes, the
-sfdx-hardis comment says what reached the org: the banner **(1)**, the counts line **(2)**, and the
-Quick Deploy line **(3)**: the merge released the validation its check had already run on
-production, rather than deploying again. The picture is the comment of an earlier deployment, so
-your counts are different.
+sfdx-hardis comment says what reached the org: the verdict **✅ Deployed to `main`** **(1)**, the
+**Metadata** row **(2)**, which says how it was deployed, for example **Full Quick Deploy**, and
+what changed, and the **Apex tests** row **(3)**, **Already run during the validation**: the merge
+deployed the validation its check had already run on production, rather than deploying again. The
+picture is the comment of an earlier deployment, so your counts are different.
 
 ![The sfdx-hardis comment on a merged Pull Request](../../_assets/annotated/web/github-pr-deployed.png)
 
@@ -236,7 +237,9 @@ a retrofit carries what production already has and declares nothing new.
 ![The end of Save / Publish, with its actions bar](../../_assets/annotated/vscode/work-save-completed.png)
 
 Open the Pull Request into `integration`, title it `Retrofit: US-045 back down into integration`,
-wait for its checks, and merge it. `integration` now carries everything production carries, and the
+wait for its checks, and merge it with **Merge pull request**, never a squash. The green check comment
+says why on its **How to merge** line: a retrofit brings back commits of another major branch, which
+must stay as they are. `integration` now carries everything production carries, and the
 next story built on it cannot take the fix away.
 
 <details markdown="1"><summary>Under the hood: the hotfix and the retrofit, in commands</summary>
@@ -246,9 +249,11 @@ branch, which cuts his branch from `preprod`, and `hardis:work:save` computed th
 `preprod`. The pipeline treats `preprod` as any other major branch. What makes it a hotfix is the
 target, not a mode.
 
-The branch prefix is worth a second of thought, for a reason beyond tidiness: the DORA **rework
-rate** of [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md) counts hotfix Pull Requests, and recognises one by a `hotfix/`, `fix/` or
-`bugfix/` branch prefix. This project calls its fix branches `fix/`, so this one counts.
+The branch prefix is worth a second of thought, for a reason beyond tidiness: the DORA **Rework**
+rate of [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md) counts hotfix Pull Requests, and recognises one by a `hotfix/`, `fix/` or
+`bugfix/` branch prefix. This project calls its fix branches `fix/`, so this one counts, on the
+branch it was merged into: `preprod`. The release that carries it on to `main` comes from
+`preprod`, so the **Rework** of `main` does not move.
 
 **The retrofit** is Git from end to end, and nothing is retrieved from any org:
 
@@ -281,6 +286,15 @@ Command documentation: [hardis:work:new](https://sfdx-hardis.cloudity.com/hardis
 
 ## If it goes wrong
 
+**The DevOps Pipeline panel shows `integration` alone, and the hotfix Pull Request points at a lonely `preprod` box.**
+The panel draws the pipeline from the files of the branch VS Code is on, and you are on a branch
+that dates from before [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md), so it knows one major branch. Nothing is lost: `uat`, `preprod`
+and `main` are in your fork with their configuration. Click the branch name at the bottom left of
+VS Code, pick `integration`, then **Source Control** > **...** > **Pull**, and refresh the panel.
+If the Pull Request of the hotfix lists far more than one file, its branch was cut from that same
+old commit: close it, click **Training: Level 3** > **Update my course**, then **Simulate my
+teammates** again.
+
 **The Pull Request of the hotfix targets `integration`.**
 The simulation opens it into `preprod`. If you see `integration`, you are looking at a different
 Pull Request: check its head branch is `fix/US-045-installation-date-hotfix`.
@@ -303,7 +317,7 @@ almost always a component that `integration` changed and `main` has not seen, no
 
 ## Check your work
 
-**Training: Level 3** > **Check my work**.
+Welcome page > **Training: Level 3** > **Check my work**, then pick **Lab 3.7**.
 
 It looks for the `Cancelled` exemption on `preprod` and on `main`, and for the same line on
 `integration`: the hotfix shipped, and the retrofit brought it back down.

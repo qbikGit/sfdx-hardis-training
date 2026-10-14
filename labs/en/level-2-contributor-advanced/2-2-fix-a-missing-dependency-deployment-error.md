@@ -31,7 +31,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~25 min
+**Time**: ~35 min<!-- observed --> (Labs 2.1 and 2.2 observed together: median 57 min, 14 learners, fastest 28 min)<!-- /observed -->
 
 **You will**: update a flow that already runs in production, meet your first failing deployment
 check, read the error properly, and find what your package forgot.
@@ -80,10 +80,12 @@ First, the field the flow needs so it does not warn twice. In `helios-dev`,
 | Field Name    | `Crew_Warning_Sent__c` |
 | Default Value | Unchecked              |
 
-On the field-level security screen, tick **Visible** for **System Administrator** only, and on the
-last screen untick **Installation Layout**: nobody but the flow needs this checkbox, so it goes on no
+The field-level security screen arrives with **Visible** ticked for nearly every profile, as in
+[Lab 1.4](../level-1-contributor-basics/1-4-build-a-custom-field-in-your-org.md): clear the column with the checkbox in its header, then tick **Visible** for **System
+Administrator** only. On the last screen untick **Installation Layout**: nobody but the flow needs this checkbox, so it goes on no
 page. That one tick is for you, not for the flow: Flow Builder only offers the fields the person
-editing the flow can read, and without it **Crew Warning Sent** is missing from the list of step 2.
+editing the flow can read, and without it **Crew Warning Sent** is missing from the lists of Flow
+Builder below.
 The flow itself runs in system mode and needs no grant.
 
 Then the flow. **Setup > Flows**, open **Installation Crew Warning**. It is active, so Flow Builder
@@ -94,8 +96,9 @@ keeps running until you activate yours.
 
 Three changes, and the picture above shows where each one starts:
 
-1. **Start** element: click **Edit** **(1)** on it. Under **Set Entry Conditions**, the flow already
-   runs when `Crew Size` is not null **(1)**. Click **Add Condition** **(2)** and add the second one,
+1. **Start** element: click **Edit** **(1)** on it. A panel opens, the one of the next picture, and
+   its numbers are its own: under **Set Entry Conditions**, the flow already runs when `Crew Size`
+   is not null **(1)**. Click **Add Condition** **(2)** and add the second one,
    `Panels Required`, **Is Null**, `False`. This panel has no **Done** button: the condition is kept
    as you fill it in, and the **X** **(3)** at the top right closes the panel
 
@@ -136,7 +139,9 @@ new version.
     that a fault path exists. The original flow already had one, and your new element follows it.
 
 Test it: open an installation, set `Panels Required` to 40 and `Crew Size` to 2, save. A task
-appears in its **Activity**. Save again: no second task. That is the story working, in your org.
+appears on the right of the record, in the activity panel under the **Panel delivery timeline**, in
+its **Upcoming & Overdue** section. Click **Refresh** in that panel if it is slow to show. Save
+again: no second task. That is the story working, in your org.
 The checkbox itself stays out of sight: no permission set grants it, because nobody but the flow
 needs it, and the only person who can read it is the administrator who built the flow.
 
@@ -157,8 +162,9 @@ Then **Save / Publish** **(1)**.
 
 Push, open the Pull Request into `integration` in your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`), and wait.
 
-The check fails, and the sfdx-hardis comment on the Pull Request names the component under
-**Deployment errors** **(1)**:
+The check fails. The sfdx-hardis comment on the Pull Request opens on **❌ Cannot merge into
+`integration`: 1 deployment error**, and names the component under **❌ Deployment errors**
+**(1)**:
 
 ![The sfdx-hardis comment of a failed deployment check](../../_assets/annotated/web/github-pr-check-failed.png)
 
@@ -167,11 +173,14 @@ Installation_Crew_Warning field integrity exception: unknown (The field "Crew_Wa
 for the object "Installation__c" doesn't exist.)
 ```
 
-Under **Flow changes** **(2)**, the comment links to a second comment of its own: the visual diff of
-the flow. It draws the flow, and colours what your story changed. The new **Mark Warning Sent**
-element is green **(1)**, and the tables under the diagram mark every changed property with a red
-square for the old value and a green one for the new: the description **(2)**, the formula **(3)**.
-A reviewer reads your flow change there, without opening Flow Builder or its XML.
+Further down, the folded line **📋 1 component failed, ... would change in the org** **(2)** opens
+a table of the components, per type, with your flow in its **❌ Failed** group. A flow is metadata
+like any other in this comment. What it gets on top is a second comment of its own, posted right
+below: **🔀 Flow Installation Crew Warning**, the visual diff of the flow. It draws the flow, and colours what your story changed. The new **Mark Warning Sent** element is green **(1)**.
+Above the diagram, a **properties changed** table gives every changed property with its value
+before and after: the description **(2)**, the formula **(3)**. The full tables of the flow are
+folded under **All properties and elements**. A reviewer reads your flow change there, without
+opening Flow Builder or its XML.
 
 ![The visual diff of the Installation Crew Warning flow, posted on the Pull Request](../../_assets/annotated/web/github-pr-flow-diff.png)
 
@@ -191,7 +200,7 @@ Open the package: in the **DevOps Pipeline** panel, the **Deployment packages** 
 
 ![The Deployment packages menu of the DevOps Pipeline panel, with Package XML](../../_assets/annotated/vscode/pipeline-packages-menu--package-xml.png)
 
-Type `Crew_Warning` in its filter box **(1)**. One row is left, **Flow** **(2)**: the package
+Type `crew_warning` in its filter box **(1)**. One row is left, **Flow** **(2)**: the package
 carries your flow. There is no **CustomField** row at all: the package does not carry
 `Installation__c.Crew_Warning_Sent__c`.
 

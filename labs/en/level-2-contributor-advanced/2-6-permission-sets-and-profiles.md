@@ -10,10 +10,10 @@ screenshots:
   - annotated/vscode/pipeline-cards--new-user-story
   - annotated/vscode/pipeline-config
 depends_on:
-  commands: [hardis:work:save]
-  flags: []
+  commands: [hardis:mdapi:read, hardis:work:save]
+  flags: [--active-only]
   config: [autoCleanTypes, minimizeProfiles, autoRemoveUserPermissions]
-  panels: [pipelineConfig, packageXml]
+  panels: [metadataRetriever, pipelineConfig, packageXml]
   docs: [salesforce-devops-work-on-user-story-profiles]
 ---
 
@@ -21,7 +21,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~25 min
+**Time**: ~30 min<!-- observed --> (observed: median 34 min, 6 learners, fastest 21 min)<!-- /observed -->
 
 **You will**: chase a permission that vanishes between a green deployment and the target org, and
 find out it was removed on purpose.
@@ -65,13 +65,17 @@ Retrieve it the usual way: **Commit changes**, **Recent Changes**, **Search Meta
 `Helios Crew` Profile, retrieve, and commit it from **Source Control**. Then **Save / Publish**,
 push, Pull Request, green, merge.
 
+The file is much longer than the one in the repository. The **Retrieve mode** of the Metadata
+Retriever reads **Auto**: it retrieves a Profile whole, every permission it grants in `helios-dev`,
+so your new grant on `Cost` is in it, along with everything else the profile can do.
+
 ### 2. Discover that nothing happened
 
 Open `helios-integration` and check the field-level security of **Panel Batch > Cost**: the
 **Helios Crew** column is not ticked. The permission is not there.
 
-Go back to the Pull Request. The comment says success, and the Profile is among the deployed
-components. What was deployed is not what you committed, though.
+Go back to the Pull Request. The deployment comment says **✅ Deployed to `integration`**, and its
+folded **📋** table counts a **Profile** among the components that changed. What was deployed is not what you committed, though.
 
 ### 3. Read your own diff
 
@@ -93,12 +97,14 @@ Profiles are the single worst metadata type to version, for three reasons that a
 1. **They are enormous and they are shared.** One Profile file lists every object, field, tab, app
    and class permission in the org. Two people touching two unrelated stories both produce a
    thousand-line diff of the same file, and they conflict every time
-2. **A retrieved Profile says no to what it did not have.** It lists the fields and objects of your
-   package with `false` wherever the profile had no access when you retrieved it. If a colleague
-   granted one of them since, deploying your file **switches theirs off**, silently
-3. **What you retrieve depends on your package.** A Profile is retrieved with only the permissions
-   for the components in your package, so the same Profile looks different depending on who
-   retrieved it and when
+2. **A retrieved Profile can say no to what it did not have.** Retrieved the standard way, it lists
+   the fields and objects of your package with `false` wherever the profile had no access when you
+   retrieved it. If a colleague granted one of them since, deploying your file **switches theirs
+   off**, silently. The Metadata Retriever's **Auto** mode leaves those `false` lines out
+3. **What you retrieve depends on how, and from where.** Retrieved the standard way, a Profile only
+   holds the permissions of the components retrieved with it. Retrieved whole, as the Metadata
+   Retriever does in **Auto**, it holds everything the profile has in the org it came from. Either
+   way, the same Profile looks different depending on who retrieved it, from which org, and when
 
 `minimizeProfiles` strips from Profiles everything that a Permission Set could carry instead,
 leaving Profiles to hold only what genuinely cannot live anywhere else: login hours, IP ranges,
@@ -114,19 +120,27 @@ delete somebody else's.
     `force-app/main/default/profiles/`, stay in `manifest/package.xml`, and are deployed with
     everything else.
 
-    They stay **short** on purpose. A Profile retrieved whole lists hundreds of user permissions, and
-    Salesforce adds and removes some at every release, three times a year: a full Profile committed
-    in spring can fail to deploy in autumn on a permission that no longer exists. The short version
-    names only what this project decided, and `minimizeProfiles` keeps it short every time somebody
-    publishes one.
+    They carry **no field, object, class or Flow permission** on purpose, and no user permission
+    except on `Admin`. A Profile retrieved whole lists hundreds of user permissions, and Salesforce
+    adds and removes some at every release, three times a year: a full Profile committed in spring
+    can fail to deploy in autumn on a permission that no longer exists. `minimizeProfiles` takes
+    those permissions out every time somebody publishes a Profile. What stays can still be long,
+    because a Profile retrieved whole lists the tab setting and the page layout of every object of
+    the org: those are exactly what only a Profile can hold.
+
+    Those lines are also where a Profile stays tied to the org it came from. It names each page
+    layout and each tab, standard objects included, and an org that does not have one of them
+    refuses the whole Profile. It deploys everywhere in this course because your orgs are built to
+    hold the same objects, under the same names. **If it goes wrong**, below, shows how to find out
+    which org differs when they do not.
 
 ### 5. Do it the way the project expects
 
 Redo the grant where it belongs. Your first Pull Request is merged, so this is a second one for the
 same story: **New User Story**, name `US-033-crew-permission-set`, org `helios-dev`.
 
-In `helios-dev`: **Setup > Permission Sets > Helios Delivery Crew > Object Settings > Panel Batches
-> Edit**, tick **Read Access** on `Cost`, **Save**.
+In `helios-dev`: **Setup > Permission Sets > Helios Delivery Crew > Object Settings > Panel
+Batches > Edit**, tick **Read Access** on `Cost`, **Save**.
 
 Retrieve the **Permission Set** this time, commit it, **Save / Publish**, and open the Pull
 Request. The **Git Delta package.xml** report
@@ -214,9 +228,45 @@ The CI user cannot grant a permission it does not have itself. Assign **Helios D
 the integration org user, which **Training: Level 2 > Set up one of my training orgs** does.
 
 **The Profile comes back a thousand lines long.**
-It was committed after a retrieve and never went through the cleaning. Check that
-`minimizeProfiles` is still listed on the **Salesforce Project** tab of **Pipeline Settings**, then
+A Profile retrieved whole keeps, after the cleaning, the tab settings and the page layout of every
+object of the org, its default app and record types, and on `Admin` its user permissions: those
+stay on purpose. If it still carries field, object or class permissions, it was committed after a retrieve and never went through the cleaning. Check
+that `minimizeProfiles` is still listed on the **Salesforce Project** tab of **Pipeline Settings**, then
 **Save / Publish** again. Do not shorten the file by hand.
+
+**A deployment refuses the Profile with `no Layout named ...` or `no CustomTab named ...`.**
+It can happen on this Pull Request, or much later, the first time the Profile reaches an org of
+Level 3. The Profile assigns a page layout, or shows a tab, that the target org does not have. The
+message names it, as `Object-Layout name`: start there.
+
+1. **Is it yours?** Search the repository for the layout name (`Ctrl+Shift+F`). If a file holds
+   it, the layout only misses from `manifest/package.xml`, which is the error of
+   [Lab 2.2](2-2-fix-a-missing-dependency-deployment-error.md). If no file holds it, Salesforce
+   created it in the org the Profile was retrieved from, and nobody decided it
+2. **Why does one org have it and not the other?** Open **Setup > Object Manager** in both orgs and
+   look for the object, then for its **Page Layouts**. There are three usual answers:
+
+    | What you find in the target org                       | The cause                                                                                                                    |
+    |-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+    | The object is not there                               | A Salesforce feature is on in one org and off in the other. `ServiceAppointment` and its neighbours come with Field Service  |
+    | The object is there, its layout has a translated name | The layout was created by a user working in another language: `Présentation Crew Capacity` instead of `Crew Capacity Layout` |
+    | The object is there, with no layout or another one    | The two orgs were not created at the same time, or somebody renamed or deleted the layout by hand                            |
+
+3. **Fix the cause, not the message.** A feature: make the orgs agree, by switching it on in the
+   target org before the deployment, which is a manual action for the release manager, or off in
+   the org you build in, and retrieve the Profile again. A language: set your user to English in
+   the target org, **your picture > Settings > Language & Time Zone**, and rename the layout
+   there. Anything else, on an object your project does not use: the line has no business in the
+   repository. In a **Fix** User Story, open the Profile file, delete the `<layoutAssignments>`
+   block that names the layout, or the `<tabVisibilities>` block that names the tab, and publish
+
+Salesforce reports one missing name per deployment, so a second one can hide behind the first.
+
+If the list has dozens of names, all standard objects, your scratch orgs were created before this
+course switched Field Service and the Thanks badges off in them. **Training: Level 2 > Update my
+course**, then **Training: Level 1 > Set up my training environment** again: it switches both off
+in the scratch orgs you have, and deletes nothing. Then a **Fix** User Story from `helios-dev`,
+retrieve `Helios Crew` again as in step 3, and **Save / Publish**.
 
 ## Check your work
 

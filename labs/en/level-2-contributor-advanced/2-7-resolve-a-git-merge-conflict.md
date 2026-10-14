@@ -30,7 +30,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~35 min
+**Time**: ~30 min<!-- observed --> (observed: median 32 min, 5 learners, fastest 13 min)<!-- /observed -->
 
 **You will**: face a real merge conflict on two files that conflict very differently, and resolve
 both without losing anybody's work.
@@ -173,7 +173,9 @@ each with a **!** **(2)**, and the status bar says a merge is in progress.
 ![The Source Control panel with the conflicting files under Merge Changes](../../_assets/annotated/vscode/git-merge-conflicts--merge-changes.png)
 
 The picture lists only the permission set. Yours also lists the flow `Installation_Assign_Crew`,
-with its own **!**: two files, as GitHub said.
+with its own **!**: two files, as GitHub said. Under **Staged Changes**, two more files wait, the
+field Mariia created and the layout she changed: git merged those on its own. Leave them there, they
+are part of the merge.
 
 <details markdown="1"><summary>Under the hood: what Merge Branch ran</summary>
 

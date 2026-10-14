@@ -5,7 +5,7 @@ description: "Protégez ce que l'UAT garde pour elle avec package-no-overwrite, 
 level: 3
 lab: 5
 lang: fr
-source_rev: "044a8eacb552ef9251cdc58fd3e6a95fde210d1f"
+source_rev: "f25960a8cc88a556eb27b6b6e1c8446b343c9b48"
 screenshots:
   - annotated/vscode/devops-pipeline-level3--create-promotion
   - annotated/vscode/pipeline-branch-modal-level3--what-it-carries
@@ -17,9 +17,9 @@ screenshots:
 depends_on:
   commands: [hardis:doc:release-notes, hardis:project:deploy:smart]
   flags: []
-  config: [mergeTargets, availableTargetBranches, packageNoOverwritePath, failValidationOnPendingManualActions]
+  config: [mergeTargets, availableTargetBranches, failValidationOnPendingManualActions]
   panels: [pipeline, deploymentAction]
-  docs: [salesforce-devops-deploy-major-branches, hardis/doc/salesforce-devops-release-notes]
+  docs: [salesforce-devops-deploy-major-branches, hardis/doc/salesforce-devops-release-notes, salesforce-devops-config-overwrite]
 ---
 
 # Lab 3.5 - Promouvoir en UAT et écrire les notes de version
@@ -46,7 +46,7 @@ tôt par des personnes différentes, et l'org dans laquelle elle déploie contie
 
 - [ ] [Lab 3.4](3-4-merge-colliding-pull-requests.md) terminé : US-018 et US-019 mergées dans `integration`
 - [ ] `helios-uat` connectée : la scratch org créée au Niveau 1, configurée comme org de `uat` depuis
-- [ ] Authentification JWT fonctionnelle pour `uat` ([Lab 3.1](3-1-configure-the-pipeline-up-to-production.md))
+- [ ] `SFDX_AUTH_URL_UAT` toujours dans votre fork : `uat` continue de se connecter avec, comme l'explique le [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md)
 
 ## Les étapes
 
@@ -136,9 +136,14 @@ de pipeline, comme le reste.
 
 ### 3. Créer la Pull Request de promotion
 
+Rien n'est encore ouvert entre `integration` et `uat` : la Pull Request de promotion, c'est à vous
+de la créer, maintenant. Le nombre dans la bulle au coin de la boîte `integration` n'est pas une
+Pull Request : il compte les User Stories qui y attendent, la liste lue à l'étape 1.
+
 Dans le diagramme **DevOps Pipeline**, la flèche d'`integration` vers `uat` porte une pastille
 **+ PR** **(1)**. Cliquez dessus : GitHub s'ouvre sur une nouvelle Pull Request d'`integration` vers
-`uat`, les deux branches déjà renseignées.
+`uat`, les deux branches déjà renseignées. Ne cliquez pas encore sur **Create pull request** : le
+titre vient d'abord, plus bas.
 
 ![La pastille + PR sur la flèche d'integration vers uat](../../_assets/annotated/vscode/devops-pipeline-level3--create-promotion.png)
 
@@ -157,7 +162,14 @@ une, la pastille est remplacée par le numéro de la Pull Request et son statut.
     promouvoir, ce que transporte une simple Pull Request d'une branche vers la suivante, et ce que
     vous devriez faire presque toutes les semaines. Le [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md) est l'exception.
 
-Intitulez-la pour les humains qui la liront, pas pour git, et appelez-la une **promotion** :
+!!! note "Une story de la liste ne doit pas partir ?"
+    Une promotion ordinaire transporte toute la branche : on ne peut pas en retirer une Pull
+    Request. Laisser une story de côté, c'est le rôle du bouton de promotion de la note ci-dessus :
+    il crée une promotion avec les stories que vous cochez, et en créer une nouvelle remplace celle
+    qui est déjà ouverte. Le [Lab 3.10](3-10-promote-a-subset-with-promotion-branches.md) le déroule.
+
+De retour sur la page GitHub, remplacez ce que propose **Add a title**. Intitulez la Pull Request
+pour les humains qui la liront, pas pour git, et appelez-la une **promotion** :
 
 > Promotion 2026-09: crew capacity cap, quote PDF
 
@@ -166,26 +178,33 @@ métier lit "release" comme "c'est en ligne", et une Pull Request vers `uat` ne 
 Gardez les deux mots distincts et une liste de Pull Requests se lit comme l'histoire de ce qui a
 atteint la production.
 
+Cliquez maintenant sur **Create pull request**.
+
 Mergez-la avec **Merge pull request**, jamais avec un squash : une promotion transporte chaque commit
 des stories qu'elle promeut, et la promotion suivante, le retrofit et les notes de version ont tous
-besoin de les retrouver un par un ([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)).
+besoin de les retrouver un par un ([Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md)). Le commentaire vert du contrôle dit la même chose sur sa ligne
+**How to merge** : **use a merge commit, never squash**.
 
 ### 4. Lire les deployment actions qu'elle transporte
 
-Une fois le contrôle lancé, le commentaire sfdx-hardis gagne deux sections, **Pre-deployment Actions
-Results** et **Post-deployment Actions Results**. Ce qu'une promotion ajoute par-dessus est le
-paragraphe qui nomme la portée **(1)** : chaque Pull Request qu'elle transporte, chacune un lien.
+Une fois le contrôle lancé, le commentaire sfdx-hardis compte les actions dans la ligne **Deployment
+actions** de son tableau, et liste chacune dans la section repliée **🛠️ Deployment actions of this
+job**. Ce qu'une promotion ajoute par-dessus est sa portée **(1)** : la section repliée **ℹ️ Where the
+deployment actions and test classes come from** dit qu'elles sont rassemblées depuis le contenu de
+cette Pull Request, et la section repliée **🎫 ... tickets · ... Pull Requests** liste chaque Pull
+Request qu'elle transporte, chacune un lien.
 
 ![Les deployment actions rassemblées sur la Pull Request de promotion](../../_assets/annotated/web/github-pr-promotion-actions.png)
 
 Chaque action que n'importe quel contributeur a déclarée sur n'importe laquelle des stories mergées
-est rassemblée dans un seul tableau, avec son libellé, son type, son statut et un lien de retour vers
-la Pull Request d'où elle vient. Tout ce qui demande un humain reçoit une **liste de cases au-dessus
-du tableau**, intitulée *Manual Actions to perform before proceeding with deployment* ou *after
-deployment*. Les deux listes atterrissent sur des jobs différents : le job de contrôle porte celle
-d'avant **(2)**, pour que vous puissiez agir pendant que vous décidez, et le job de merge porte celle
-d'après. Les actions post-déploiement **(3)** affichent **skipped** sur le contrôle : un contrôle ne
-change rien dans l'org, elles attendent donc le merge.
+est rassemblée dans ce seul tableau, avec son libellé, son moment, son résultat avec la raison en
+clair, et un lien de retour vers la Pull Request d'où elle vient. Tout ce qui demande un humain
+reçoit sa propre **liste de cases**, au-dessus des sections repliées, intitulée **👋 To do by hand in
+`uat` before the deployment** ou **after the deployment**. Les deux listes atterrissent sur des jobs
+différents : le job de contrôle porte celle d'avant **(2)**, pour que vous puissiez agir pendant que
+vous décidez, et le job de merge porte celle d'après. Les actions post-déploiement **(3)** sont
+comptées **🕒 after the merge** sur le contrôle, avec la raison **Runs after the merge only** : un
+contrôle ne change rien dans l'org, elles attendent donc le merge.
 
 **Lisez-le avant de merger.** Deux choses à chercher :
 
@@ -228,6 +247,13 @@ Type RemoteSiteSetting: 1 item(s) skipped because they already exist in the targ
 
 `helios-uat` a déjà `Helios_Warehouse`, la promotion l'a donc laissé hors du package, et le
 **Final package.xml to deploy** affiché juste après a un élément de moins.
+
+La Pull Request le dit aussi, sans le log : le commentaire du contrôle, et celui qu'écrit ce
+déploiement, portent une section repliée **🛡️ Protected by `manifest/package-no-overwrite.xml`
+(1)**. Ouvrez-la : son tableau, **Protected components per metadata type**, compte **1** dans la
+colonne **🛡️ Not overwritten** de la ligne **RemoteSiteSetting**. Lisez-la sur le
+contrôle, avant de merger : un composant que vous pensiez déployer et qui apparaît là est un
+composant que la liste protège par erreur.
 
 ### 6. Vérifier avec des yeux de testeur
 
@@ -284,13 +310,15 @@ Sur cette promotion, les notes générées s'ouvrent ainsi :
 | Metric           | Value |
 |------------------|-------|
 | Pull Requests    | 22    |
-| Tickets          | 16    |
+| Tickets          | 17    |
 | Contributors     | 1     |
 | Added / Modified | 38    |
 ```
 
-Le décompte inclut les Pull Requests qui ne portent aucune story : celles de configuration du [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md)
-et de l'étape 2, et la promotion elle-même. Le vôtre dépend de votre parcours : un peu plus de 20 après les
+Il y a plus de Pull Requests que de tickets : la Pull Request de configuration de l'étape 2 et la
+promotion elle-même ne portent aucune story, et certaines stories ont pris deux Pull Requests, comme
+US-062 et son correctif au [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md). La configuration du [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) a son propre ticket, US-050,
+parce qu'elle est passée par sa propre story. Le vôtre dépend de votre parcours : un peu plus de 20 après les
 Niveaux 1 et 2, beaucoup moins après **Reset this level**, qui démarre le Niveau 3 sans leurs Pull
 Requests.
 
@@ -299,13 +327,18 @@ les métadonnées modifiées par type, et les deployment actions avec leur statu
 manuelle de délivrabilité **success**, cochée avant le merge, les imports et la planification
 **success**.
 
-Lisez-les puis améliorez-les. Des notes générées sont une liste complète, et une note de version que
-le métier lit a besoin de deux choses que le générateur ne peut pas connaître :
+Lisez-les, puis écrivez la note de version à partir d'elles. Ne collez pas le document généré :
+c'est une liste complète, pour qui veut chaque détail, et il reste là où il a été écrit. Ce que le
+métier lit est un texte court, le vôtre, et il commence par deux choses que le générateur ne peut pas
+connaître :
 
 1. **Une phrase en haut disant à quoi sert cette livraison.** "Les équipes ne peuvent plus être
    surdimensionnées, et les commerciaux peuvent générer des PDF de devis."
 2. **Les étapes manuelles, formulées comme des instructions à une personne nommée**, pas comme une
    liste technique
+
+En dessous, gardez une ligne par story du tableau des tickets des notes générées, reformulée en ce
+qui change pour le métier, et nommez le fichier généré pour qui veut le reste.
 
 Puis donnez-les aux gens qui les lisent. Ouvrez la Pull Request de promotion que vous avez mergée,
 **...** en haut à droite de sa description, **Edit**, et collez les notes améliorées à la place de la
@@ -339,8 +372,7 @@ manquant qu'une livraison vide.
 depuis le commit que sa Pull Request a laissé sur `integration`, commit de merge ou commit unique
 d'un squash indifféremment : c'est pourquoi une Pull Request de feature peut être squashée. Une
 promotion squashée dans `uat` remplacerait tous ces commits par un seul qu'aucune story n'a produit,
-et les notes d'`uat` nommeraient la promotion et rien de ce qu'elle transportait. Le rapport DORA du
-[Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md) s'appuie sur le même lien.
+et les notes d'`uat` nommeraient la promotion et rien de ce qu'elle transportait.
 
 **Une promotion est une Pull Request ordinaire.** Il n'y a pas de machinerie de promotion spéciale
 dans l'installation par défaut : `integration` dans `uat` est une branche mergée dans une autre
@@ -372,6 +404,31 @@ Documentation de la commande : [hardis:doc:release-notes](https://sfdx-hardis.cl
 
 ## En cas de problème
 
+**Le check de la promotion est vert tout de suite, sans étape de délivrabilité à faire.**
+Deux causes. Ouvrez d'abord la section repliée **🛠️ Deployment actions of this job** du commentaire
+du check. Quand la ligne de **Set Email Deliverability to All Email** indique *skipped: Runs after
+the merge only*, votre étape du [Lab 2.4](../level-2-contributor-advanced/2-4-ship-reference-data-and-a-batch-with-deployment-actions.md) a été enregistrée avec **Execution Contexts** sur **Deployment job
+only**, et le sfdx-hardis de votre check l'a alors laissée de côté. Rien n'est perdu : faites le
+clic dans `helios-uat` maintenant, mergez, et cochez sa case dans le commentaire du job de
+déploiement. Le sfdx-hardis actuel arrête le check sur une telle étape, quel que soit son contexte.
+
+Quand l'étape n'est pas listée du tout, les actions du Niveau 2 ne voyagent avec aucune Pull Request de cette promotion. sfdx-hardis
+collecte les deployment actions dans les Pull Requests qu'une promotion transporte, et **Reset this
+level** met les stories du Niveau 2 dans `integration` en un seul commit qu'aucune Pull Request de
+votre fork n'a fait. Sa dernière étape donne à leurs actions une Pull Request de votre fork,
+**Deployment actions of the earlier levels**, et la merge une fois ses checks passés. Cherchez-la
+dans l'onglet **Pull requests** de votre fork :
+
+- **Ouverte avec des checks verts** : si GitHub la montre encore comme un brouillon (draft), cochez
+  la case de **Set Email Deliverability to All Email** dans son commentaire de check, celle
+  d'`integration` que vous avez faite au [Lab 2.4](../level-2-contributor-advanced/2-4-ship-reference-data-and-a-batch-with-deployment-actions.md), puis cliquez sur **Ready for review**. Mergez-la
+  avec **Merge pull request**. La Pull Request de promotion reçoit le nouveau commit
+  d'`integration`, et son check repart, rouge cette fois, comme le dit l'étape 4
+- **Absente** : votre reset a tourné sans cette étape, le cas d'un fork dont les scripts datent
+  d'avant le 2026-10-08. Votre pipeline n'a rien de faux : continuez, et les étapes 4, 5 et 7
+  montrent moins d'actions que ce lab ne le décrit. Avant votre prochain reset, lancez **Update my
+  course**
+
 **Le job de déploiement vers uat est rouge sur « Put the delivery managers in the Crew Leads group ».**
 Votre fork date d'avant le 2026-10-05, quand le correctif de Mariia au [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) ne livrait pas encore le
 groupe public Crew Leads : `helios-uat` n'en a pas, et sa première action le cherche. Les
@@ -383,8 +440,9 @@ actions**. Créez le même groupe dans `helios-preprod` et `helios-prod` avant l
 [Lab 3.6](3-6-release-to-production-and-read-dora-metrics.md).
 
 **Le contrôle échoue avec des erreurs d'authentification pour uat.**
-[Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) pour la branche `uat` : les secrets, et la pré-autorisation de l'External Client App dans
-`helios-uat`.
+`SFDX_AUTH_URL_UAT` manque ou n'est plus à jour, souvent parce que `helios-uat` a expiré et a été
+reconstruite. **Training: Level 3 > Set up my training environment** reconstruit ce qui a expiré et
+réécrit le secret. Puis **Re-run all jobs** sur le contrôle.
 
 **Le déploiement échoue sur quelque chose qui marchait en integration.**
 Les orgs diffèrent. En général il manque en UAT une fonctionnalité, une licence, ou un composant que

@@ -5,7 +5,7 @@ description: "Inscrivez-vous à une org Salesforce Developer Edition gratuite, p
 level: 1
 lab: 2
 lang: fr
-source_rev: "3a6b3f5a9738b10c6a54060e5dbed6422f08d256"
+source_rev: "b36716a872d1f64f594410d19a203737fae38195"
 screenshots:
   - annotated/web/sf-signup
   - annotated/web/gh-cli-download
@@ -159,8 +159,8 @@ tard.
 
 Ce nom s'appelle un **alias**, et c'est lui que vous verrez et cliquerez désormais : dans ce panneau,
 dans le diagramme de la pipeline, partout où le cours nomme une org. Les trois orgs créées à l'étape 5
-reçoivent le leur automatiquement, et elles apparaissent dans ce tableau sous ces noms **(2)**,
-chacune avec un **Connected** vert **(3)**. **C'est par ce panneau que vous vous connectez à une org
+reçoivent le leur automatiquement, et elles apparaissent dans le tableau d'Orgs Manager sous ces noms,
+chacune avec un **Connected** vert : **(2)** et **(3)** sur la première image de cette étape. **C'est par ce panneau que vous vous connectez à une org
 pour tout le reste du cours**, et c'est aussi là que vous vérifiez sur quelle org vous êtes pointé,
 ce qui évite plus de confusions que n'importe quoi d'autre dans cette formation.
 
@@ -362,6 +362,7 @@ OK  integration now names the org of every branch, and is pushed.
 8 of 8  Changes through a Pull Request, merged once green
 OK  integration now takes changes through a Pull Request only, merged once its checks are green.
 OK  uat now takes changes through a Pull Request only, merged once its checks are green.
+OK  A branch is now deleted once its Pull Request is merged. integration and uat stay: a protected branch cannot be deleted.
 ```
 
 Comptez quinze à vingt minutes, presque entièrement sur les étapes 4 et 5, quand Salesforce crée les
@@ -389,6 +390,19 @@ paramètre, déployé comme de la métadonnée. Chaque scratch org, c'est :
 
     sf org create scratch --definition-file config/project-scratch-def.json \
       --alias helios-dev --target-dev-hub helios-prod --duration-days 30
+
+Le fichier de définition est court, et deux de ses lignes sont là pour le Niveau 3. Une scratch org
+arrive avec des fonctionnalités Salesforce qu'une org Developer Edition n'a pas, Field Service et
+les badges Thanks, et avec elles des dizaines d'objets standard. Le fichier désactive les deux, pour
+que les orgs de votre pipeline contiennent les mêmes objets : un déploiement qui nomme un objet
+absent d'une org y est refusé.
+
+Pour la même raison, la commande passe votre utilisateur de `helios-prod` en anglais, s'il ne
+l'est pas déjà, et vous le dit. Les scratch orgs sont créées en anglais, et Salesforce nomme ce
+qu'il crée dans la langue de l'utilisateur au travail : la présentation de page d'un nouvel objet
+s'appelle `Crew Capacity Layout` pour l'un et `Présentation Crew Capacity` pour l'autre. Les labs
+nomment aussi chaque écran Salesforce en anglais. Un vrai projet suit la même règle : ceux qui
+configurent et déploient travaillent dans une seule langue, dans toutes les orgs du pipeline.
 
 et chacune est ensuite alimentée :
 
@@ -425,6 +439,15 @@ pourrait encore merger sur du rouge. La mise en place de l'environnement et la r
 niveau lèvent cette protection le temps du seul push qu'elles font elles-mêmes sur ces branches, et
 la remettent juste après.
 
+Enfin, elle a demandé à GitHub de supprimer une branche une fois sa Pull Request mergée, ce qui
+correspond à la case **Automatically delete head branches** des paramètres du repository :
+
+    gh api -X PATCH repos/<your-handle>/sfdx-hardis-training -F delete_branch_on_merge=true
+
+Le réglage vaut pour tout le repository, donc aussi pour une Pull Request dont la source est
+`integration` ou `uat`. Ces deux-là restent, parce qu'une branche protégée ne peut pas être
+supprimée : c'est pour cela que la protection passe en premier.
+
 <!-- command-links:start -->
 Documentation de la commande : [hardis:org:data:import](https://sfdx-hardis.cloudity.com/hardis/org/data/import/)
 <!-- command-links:end -->
@@ -433,7 +456,7 @@ Documentation de la commande : [hardis:org:data:import](https://sfdx-hardis.clou
 
 ### 6. Ce qu'elle vient de faire
 
-Sept choses, chacune du vrai travail sur un vrai projet, et aucune à refaire vous-même :
+Huit choses, chacune du vrai travail sur un vrai projet, et aucune à refaire vous-même :
 
 - **Votre propre copie du repository**, son *fork*, sous votre compte GitHub. Votre clone pousse là-bas
   désormais, et continue de tirer depuis le repository de l'équipe. Le fork porte les deux branches
@@ -454,17 +477,18 @@ Sept choses, chacune du vrai travail sur un vrai projet, et aucune à refaire vo
 | `helios-uat`         | La recette utilisateur, où le métier teste ce que l'intégration a rassemblé           |
 
 - **Dans quelle org déploie chaque branche**, écrit dans l'unique fichier de configuration par
-  branche du projet, dans `config/branches/`, commité sur `integration` et poussé sur votre fork
-  (votre copie personnelle du repository du cours sur GitHub, par exemple
-  `github.com/my-username/sfdx-hardis-training`). Le repository ne pouvait pas le savoir : vos orgs
-  n'existaient pas quand il a été écrit. C'est poussé parce que le contrôle du badge clone votre fork
-  (`github.com/my-username/sfdx-hardis-training`) et lit ce qui s'y trouve réellement. `uat` reçoit
+  branche du projet, dans `config/branches/`, commité sur `integration` et poussé sur votre fork. Le repository ne pouvait pas le savoir : vos orgs
+  n'existaient pas quand il a été écrit. C'est poussé parce que le contrôle du badge clone votre fork et lit
+  ce qui s'y trouve réellement. `uat` reçoit
   les mêmes fichiers avec sa première promotion, au [Lab 3.5](../level-3-release-manager/3-5-promote-to-uat-and-write-release-notes.md), comme tout changement qui l'atteint
 - **`integration` et `uat` protégées.** Une Pull Request vers l'une ou l'autre ne peut être mergée
   qu'une fois que tous les contrôles que GitHub lance dessus sont terminés et verts, et cette règle
   vaut aussi pour vous, propriétaire du fork. Sur un vrai projet, quelqu'un a mis cela en place dès
   le premier jour : un merge sur un contrôle rouge ne déploie rien, ou la moitié de quelque chose, et
   c'est la personne suivante qui s'en aperçoit
+- **Les branches mergées supprimées par GitHub.** Une fois une Pull Request mergée, la branche
+  dont elle vient n'a plus rien à dire, et votre fork la supprime. `integration` et `uat` ne sont
+  jamais supprimées : elles sont protégées
 - **Un identifiant par job de CI.** Les jobs de CI sont les jobs automatisés que GitHub lance pour
   vous, sur ses machines plutôt que sur les vôtres, et ces machines ne peuvent pas atteindre une org
   Salesforce sans identifiant. Ils sont gardés comme secrets du repository, nommés
@@ -490,9 +514,10 @@ Sept choses, chacune du vrai travail sur un vrai projet, et aucune à refaire vo
     une formation. Le marché est le suivant : un débutant atteint une pipeline qui marche dès sa
     première heure au lieu de son deuxième jour.
 
-    **Le Lab 3.1 met JWT en place proprement pour les quatre orgs, et supprime ces secrets.** Si vous
-    ne faites que les niveaux 1 et 2, supprimez les secrets quand vous avez terminé : les scratch
-    orgs, elles, se suppriment toutes seules.
+    **Le Lab 3.1 met JWT en place proprement pour `preprod` et la production**, et explique pourquoi
+    chaque org d'un vrai projet en a besoin. Ces deux secrets restent jusqu'à la fin du cours :
+    supprimez-les quand vous en avez terminé, quel que soit le niveau où vous vous arrêtez. Les
+    scratch orgs, elles, se suppriment toutes seules.
 
 ### 7. Laisser l'extension parler à GitHub
 
@@ -545,7 +570,7 @@ Votre `helios-dev` n'est pas dans le diagramme non plus, et c'est correct : le d
 travail est déployé, et rien n'est jamais déployé dans l'org où vous construisez.
 
 !!! note "`preprod` et `main` manquent exprès"
-    Votre fork (`github.com/my-username/sfdx-hardis-training`) a une branche `main`, et pas encore de
+    Votre fork a une branche `main`, et pas encore de
     `preprod`, et le diagramme ne montre ni l'une ni l'autre : une branche ne fait partie de la pipeline
     qu'à partir du moment où quelqu'un dit dans quelle org elle déploie, et personne ne l'a fait.
 
@@ -606,7 +631,7 @@ cours n'a pas créées, et recliquez sur la carte.
 Vous avez créé et supprimé des scratch orgs plusieurs fois aujourd'hui. Le quota revient sous 24
 heures : recliquez sur la carte demain, et tout ce qui est déjà fait est conservé. Supprimer une
 scratch org ne rend pas son quota, résistez donc à l'envie de supprimer et recréer :
-**Reset this level** remet les branches en place sans toucher aux orgs, et **Clean up a training
+**Reset this level** remet les branches en place et ne supprime jamais une org, et **Clean up a training
 org** en vide une sans la supprimer.
 
 **Une commande échoue avec `TotalRequests Limit exceeded`.**

@@ -5,7 +5,7 @@ description: "Corrigez une trouvaille PMD et la couverture de code Apex qui bloq
 level: 2
 lab: 5
 lang: fr
-source_rev: "ffb6aaecf99de2f613d260b80e5edd5e5d81805f"
+source_rev: "ceca7ff7d128ee1c9bdf5178537c52ead0e51d6e"
 screenshots:
   - annotated/vscode/pipeline-cards--new-user-story
   - annotated/vscode/org-monitoring--apex-tests
@@ -21,7 +21,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~30 min
+**Durée** : ~30 min<!-- observed --> (observé : médiane 30 min, 6 participants, le plus rapide 9 min)<!-- /observed -->
 
 **Vous allez** : être bloqué deux fois par des robots, corriger les deux correctement plutôt que de
 les contourner, et apprendre à lancer les contrôles avant de pousser.
@@ -74,7 +74,8 @@ Pipeline. Branche `US-027-schedule-by-availability`, cible `integration`, org `h
 Le planificateur veut vérifier plusieurs installations d'un coup. Ouvrez
 `force-app/main/default/classes/InstallationScheduler.cls`, le fichier que la pipeline déploie déjà,
 et collez-y la méthode ci-dessous, exactement comme l'a fait le développeur qui l'a écrite en
-premier. C'est la façon évidente de faire, et c'est bien le problème :
+premier. Elle va à la fin de la classe : juste au-dessus de la dernière ligne du fichier, qui est
+l'accolade `}` fermant la classe. C'est la façon évidente de faire, et c'est bien le problème :
 
 ```apex
     /**
@@ -125,7 +126,9 @@ cette méthode marche donc parfaitement pour un planificateur qui vérifie cinq 
 une. Elle passera tous les tests que vous écrirez et échouera un lundi chargé.
 
 La correction est le seul motif Apex qui mérite d'être connu par cœur : **interroger une fois, en
-dehors de la boucle, et indexer ce qu'on récupère**.
+dehors de la boucle, et indexer ce qu'on récupère**. Dans `InstallationScheduler.cls`, remplacez la
+méthode collée à l'étape 2, de sa ligne `public static List<Id> schedulableOn` à son accolade `}`
+fermante, par celle-ci, et gardez le commentaire au-dessus :
 
 ```apex
     public static List<Id> schedulableOn(List<Id> installationIds, Date wanted) {
@@ -168,14 +171,16 @@ fois, c'est le contrôle de déploiement qui **échoue** :
 [sfdx-hardis][apextest] Test run code coverage (org wide) 76.92% should be greater than 80%
 ```
 
-Le commentaire sfdx-hardis le dit aussi, en rouge : **code coverage is insufficient**. Salesforce
-seul l'aurait laissée passer, à 77 % pour son plancher de 75 % : le projet en demande davantage, et
+Le commentaire sfdx-hardis le dit aussi, dans son verdict : **❌ Cannot merge into `integration`:
+code coverage 76.92% is under the 80% target**, et sa ligne **Apex tests** dit la même chose.
+Salesforce seul l'aurait laissée passer, à 77 % pour son plancher de 75 % : le projet en demande davantage, et
 le job de contrôle l'y tient.
 
 La version avec la boucle était courte, et l'org la portait à 81 %. La correction est plus longue, et
 chacune de ses nouvelles lignes est une ligne qu'aucun test n'exécute. Vous avez ajouté une méthode à
 trois branches et aucun test. Ajoutez-les dans
-`force-app/main/default/classes/InstallationSchedulerTest.cls` :
+`force-app/main/default/classes/InstallationSchedulerTest.cls`, de la même façon, juste au-dessus
+de la dernière accolade `}` du fichier :
 
 ```apex
     @isTest

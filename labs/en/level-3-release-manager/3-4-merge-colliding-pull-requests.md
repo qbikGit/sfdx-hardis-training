@@ -12,7 +12,7 @@ screenshots:
 depends_on:
   commands: [hardis:project:deploy:smart]
   flags: []
-  config: [autoCleanTypes, packageNoOverwritePath, useDeltaDeployment]
+  config: [autoCleanTypes, useDeltaDeployment]
   panels: [pipeline, pipelineConfig, packageXml]
   docs: [salesforce-devops-config-cleaning, salesforce-devops-config-delta-deployment, salesforce-devops-config-overwrite]
 ---
@@ -61,10 +61,10 @@ of the left bar, where each level is a folder you unfold. Either route runs the 
 once: replaying one onto a branch that already has its files reports "Nothing to commit" and opens
 nothing.
 
-US-019 may do the same, and that is not a fault either. It depends on how you got here: the Level 2
-capstone merges US-019, so if you walked straight from Level 2 into Level 3 it is already in
-`integration`, and if you reset into Level 3 it is waiting for you. If it reports "Nothing to
-commit", open its merged Pull Request instead and read that. Every step below works either way.
+US-019 does the same, and that is not a fault either. The Level 2 capstone merges it, and
+**Reset this level** starts Level 3 from a branch that already holds it, so it is in `integration`
+whichever way you got here. The command says "Nothing to commit" and, when your fork has it, gives
+the link of its merged Pull Request: open that and read it. Every step below works either way.
 
 Two of the three decisions in this lab may therefore be decisions you already made. Going back over
 them with a release manager's eyes is cheaper than making them again, and about as useful.
@@ -172,16 +172,16 @@ on, and it is why these two grants were two small blocks in a permission set rat
 in a thousand-line Profile. A Profile conflict is a bad afternoon. This is most of the reason the
 project bans permissions on Profiles.
 
-**The overwrite manager** (`packageNoOverwritePath`) protects components that are deliberately
-different per org. Anything listed in `manifest/package-no-overwrite.xml` is removed from the package
-when the target org already has it, so a deployment cannot flatten a named credential that points at
-a different endpoint in each environment. The project starts with the list every sfdx-hardis project
-gets. It covers reports, dashboards, connected apps and credentials, Helios deploys none of those,
-so nothing it deploys is protected yet: [Lab 3.5](3-5-promote-to-uat-and-write-release-notes.md) adds the first entry that matters, before the first promotion to `uat`. Its location can be changed per
-branch, which is why you will not find it on the global **Deployment** tab **(2)**: switch the scope
-to `Branch: integration` and it is there, as **Branch-scoped custom Package-No-Overwrite path**.
+**The overwrite manager** protects components that are deliberately different per org. Anything
+listed in `manifest/package-no-overwrite.xml` is removed from the package when the target org
+already has it, so a deployment cannot flatten a named credential that points at a different
+endpoint in each environment. The project starts with the list every sfdx-hardis project gets. It
+covers reports, dashboards, connected apps and credentials, Helios deploys none of those, so
+nothing it deploys is protected yet: [Lab 3.5](3-5-promote-to-uat-and-write-release-notes.md) adds the first entry that matters, before the first promotion to `uat`. The list
+is a file: you open it from the **Deployment packages** menu of the DevOps Pipeline panel, not
+from a tab of this one.
 
-**Delta deployment** is **Use Delta Deployment** **(3)**, on the global **Deployment** tab, and
+**Delta deployment** is **Use Delta Deployment** **(3)**, on the global **Deployment** tab **(2)**, and
 [Lab 3.3](3-3-deploy-to-integration-and-read-the-log.md) showed you it is **Disabled** here. With it on, each merge deploys the components that changed
 rather than the declared package. It is a speed and blast-radius decision, not a safety net: it does
 not stop one merge overwriting another, because both deployments send what their own commit
@@ -189,11 +189,11 @@ contains.
 
 <details markdown="1"><summary>Under the hood: the three mechanisms and where each one lives</summary>
 
-| Mechanism         | Configuration                                                     | What it does                                                                          |
-|-------------------|-------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| Cleaning          | `autoCleanTypes` in `config/.sfdx-hardis.yml`                     | Rewrites the sources **at commit time**, in the contributor branch                    |
-| Overwrite manager | `packageNoOverwritePath` plus `manifest/package-no-overwrite.xml` | Removes components from the package **at deploy time**, when the org already has them |
-| Delta             | `useDeltaDeployment`                                              | Reduces the package to what changed since the last deployed commit                    |
+| Mechanism         | Configuration                                 | What it does                                                                          |
+|-------------------|-----------------------------------------------|---------------------------------------------------------------------------------------|
+| Cleaning          | `autoCleanTypes` in `config/.sfdx-hardis.yml` | Rewrites the sources **at commit time**, in the contributor branch                    |
+| Overwrite manager | `manifest/package-no-overwrite.xml`           | Removes components from the package **at deploy time**, when the org already has them |
+| Delta             | `useDeltaDeployment`                          | Reduces the package to what changed since the last deployed commit                    |
 
 The distinction between the first two is worth keeping straight, because they fail differently.
 
@@ -218,8 +218,8 @@ org must get one, and an existing org must keep its own.
 ## If it goes wrong
 
 **Simulate my teammates says "Nothing to commit".**
-That scenario is already in your `integration`. Expected for US-018 always, and for US-019 when you
-came straight from the Level 2 capstone. Read the merged Pull Request instead of recreating it.
+That scenario is already in your `integration`. Expected for US-018 and US-019, which Level 3
+starts with. Read the merged Pull Request instead of recreating it.
 
 **One of the two grants is missing from the permission set.**
 Something took one side of the file wholesale, most likely a manual merge during Level 2. Put it

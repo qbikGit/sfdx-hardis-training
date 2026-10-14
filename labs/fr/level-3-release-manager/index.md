@@ -4,12 +4,12 @@ description: "Tenez une pipeline CI/CD Salesforce avec sfdx-hardis : environneme
 id: l3-home
 level: 3
 lang: fr
-source_rev: "e1e8c48c227c1a01ce4aa9956321c3dc636307b7"
+source_rev: "7c275ac9d5e1a73834f5f25dd2eeee476e8ae95a"
 ---
 
 # Niveau 3 - Release manager Salesforce DevOps
 
-**Durée** : environ 7 h 20.
+**Durée** : environ 6 h 55.
 
 **Prérequis** : le [Niveau 1](../level-1-contributor-basics/index.md) **et** le
 [Niveau 2](../level-2-contributor-advanced/index.md). Les deux sont obligatoires, et l'audit du
@@ -22,7 +22,7 @@ autres. C'est exactement ce que le Niveau 2 vous fait traverser. Quelqu'un qui n
 erreur de déploiement ne peut pas juger si un contributeur a bien résolu la sienne, et les revues
 qu'il fera porteront sur la mise en forme.
 
-Si vous avez sauté le Niveau 2, faites-le. Ce sont quatre heures, et c'est la différence entre
+Si vous avez sauté le Niveau 2, faites-le. Ce sont quelques heures, et c'est la différence entre
 approuver des Pull Requests et les comprendre.
 
 ## L'histoire
@@ -55,18 +55,18 @@ seul menu. Ouvrez la **Welcome page**, et sous **CUSTOM MENUS** cliquez sur la c
 
 Elles sont dix, et les labs les appellent par ces noms :
 
-| Commande                              | Ce qu'elle fait                                                                                       |
-|---------------------------------------|-------------------------------------------------------------------------------------------------------|
-| **Set up my training environment**    | Reconstruit une scratch org qui a expiré, et pointe la pipeline dessus                                |
-| **Where am I?**                       | Dit à quel niveau et à quel lab vous en êtes, et ce qu'il faut faire ensuite                          |
-| **Set up one of my training orgs**    | Déploie l'application Helios et ses données dans une org que vous choisissez                          |
-| **Simulate my teammates**             | Crée les branches et Pull Requests de collègues dont un lab a besoin                                  |
-| **Publish my pipeline configuration** | Ouvre une Pull Request vers `integration` avec la configuration que vous avez modifiée                |
-| **Check my work**                     | Vérifie le lab que vous venez de terminer                                                             |
-| **Claim my badge**                    | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                             |
-| **Update my course**                  | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration` |
-| **Reset this level**                  | Remet votre repository au début du Niveau 3                                                           |
-| **Clean up a training org**           | Retire l'application Helios et ses données d'une org                                                  |
+| Commande                              | Ce qu'elle fait                                                                                                                                          |
+|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Set up my training environment**    | Reconstruit une scratch org qui a expiré, et pointe la pipeline dessus                                                                                   |
+| **Where am I?**                       | Dit à quel niveau et à quel lab vous en êtes, et ce qu'il faut faire ensuite                                                                             |
+| **Set up one of my training orgs**    | Déploie l'application Helios et ses données dans une org que vous choisissez                                                                             |
+| **Simulate my teammates**             | Crée les branches et Pull Requests de collègues dont un lab a besoin                                                                                     |
+| **Publish my pipeline configuration** | Ouvre une Pull Request vers `integration` avec la configuration que vous avez modifiée                                                                   |
+| **Check my work**                     | Vérifie le lab que vous venez de terminer                                                                                                                |
+| **Claim my badge**                    | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                                                                                |
+| **Update my course**                  | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration`                                                    |
+| **Reset this level**                  | Recommence le Niveau 3 : `integration`, et si vous le voulez les branches des labs et les orgs ([Recommencer le cours](../help.md#recommencer-le-cours)) |
+| **Clean up a training org**           | Retire l'application Helios et ses données d'une org                                                                                                     |
 
 Il y a un menu par niveau, et chacun ne contient que ce dont ce niveau a besoin : rien de ce que vous
 avez sous les yeux ne concerne un lab que vous n'avez pas encore atteint.
@@ -78,7 +78,7 @@ Les mêmes commandes sont dans la vue **SFDX HARDIS** de la barre de gauche, sou
 
 | Lab                                                       | Titre                                                          | Durée  |
 |-----------------------------------------------------------|----------------------------------------------------------------|--------|
-| [3.1](3-1-configure-the-pipeline-up-to-production.md)     | Configurer la pipeline CI/CD jusqu'à la production             | 75 min |
+| [3.1](3-1-configure-the-pipeline-up-to-production.md)     | Configurer la pipeline CI/CD jusqu'à la production             | 50 min |
 | [3.2](3-2-review-a-contributor-pull-request.md)           | Relire et merger la Pull Request d'un contributeur             | 25 min |
 | [3.3](3-3-deploy-to-integration-and-read-the-log.md)      | Lire le log de déploiement, et ce que .forceignore lui cache   | 45 min |
 | [3.4](3-4-merge-colliding-pull-requests.md)               | Trois Pull Requests se percutent : choisir l'ordre de merge    | 35 min |
@@ -100,11 +100,13 @@ Avant le Lab 3.1, inscrivez-vous à une org Developer Edition gratuite de plus s
 [developer.salesforce.com/signup](https://developer.salesforce.com/signup) et connectez-la dans
 **Orgs Manager** avec l'alias `helios-preprod`. Alimentez ensuite les deux orgs Developer Edition
 avec **Training: Level 3 > Set up one of my training orgs** : `helios-preprod`, et `helios-prod`,
-qui jusqu'ici ne faisait que créer les autres et ne contenait rien.
+qui jusqu'ici ne faisait que créer les autres et ne contenait rien. S'il s'arrête sur
+`Profile Helios Crew`, la section **En cas de problème** du
+[Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) dit pourquoi.
 
 `helios-prod` reçoit les mêmes sources que les autres orgs. Rien n'alimente un historique de
-déploiement : le rapport DORA du Lab 3.6 ne voit donc que l'alimentation et les déploiements que vous
-faites vous-même.
+déploiement, et l'alimentation elle-même n'est pas un déploiement du pipeline : les métriques DORA
+du Lab 3.6 ne contiennent donc que les jobs de déploiement que vos propres merges ont lancés.
 
 Si une scratch org a expiré depuis le Niveau 2, **Training: Level 3 > Set up my training
 environment** la reconstruit d'abord.

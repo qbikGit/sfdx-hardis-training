@@ -8,9 +8,11 @@ lang: en
 source_rev: ""
 screenshots:
   - annotated/web/github-pr-files
+  - annotated/vscode/pipeline-review-pr
+  - annotated/vscode/pipeline-pr-window-review-files
   - annotated/vscode/welcome-custom-menu-3
 depends_on:
-  commands: [hardis:project:deploy:smart]
+  commands: [hardis:project:deploy:smart, hardis:git:artifacts:download]
   flags: [--check]
   config: []
   panels: [pipeline]
@@ -39,7 +41,7 @@ every org after it.
 
 ## Before you start
 
-- [ ] [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) finished: JWT authentication on all four orgs
+- [ ] [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) finished: four major branches, and JWT authentication on `preprod` and `main`
 - [ ] A clean working tree
 
 ## Steps
@@ -59,26 +61,52 @@ and wait for its two checks.
 
 Read the sfdx-hardis comment, top to bottom. Four things, in this order:
 
-1. **Did it deploy?** The comment opens on a banner reading *Validation Results (deployment
-   simulation)* on a check job and *Deployment Results* on a merge job, with a line under it saying
-   whether it passed. The Salesforce deployment id is not printed anywhere: it is carried as an
-   invisible HTML marker, so that a merge job can reuse the validation as a Quick Deploy
-2. **How much does it deploy?** Not a list. One line of counts: how many components were sent, how
-   many changed, and how many of those were created, updated, deleted or left unchanged. If the
-   counts do not match the size of the story, that is your cue to go and read the diff
-3. **What does it delete?** The `deleted` count on that same line. Flows get more: a **Flow changes**
-   list linking to a diff comment per Flow, and a **Flow deletion** table when versions are being
-   removed. There is no destructive changes section for anything else, so a deleted field shows up
-   as one number and nothing else. That is worth knowing before you rely on the comment to catch one
-4. **Tests and coverage.** Coverage every time, and a collapsed *Apex test classes* block when the
+1. **Did it deploy?** The comment opens on a banner, *Validation* on a check job and *Deployment*
+   on a merge job, then a verdict: **✅ Ready to merge into `integration`**, or **❌ Cannot merge
+   into `integration`** followed by the reason, such as `1 deployment error`. The Salesforce
+   deployment id is not printed anywhere: it is carried as an invisible HTML marker, so that a
+   merge job can reuse the validation as a Quick Deploy
+2. **How much does it deploy?** The **Metadata** row of the **Check | Result** table under the
+   verdict counts how many components would change, split into created, updated and deleted, and
+   how many were validated against the org. Further down, the folded **📋 ... components would
+   change in the org** gives the changes per type of component. If the counts do not match the
+   size of the story, that is your cue to go and read the diff
+3. **What does it delete?** A `deleted` count in that same row, shown only when something goes,
+   and the **🗑️ Deleted** column of the table, which says what kind of component goes: a field, a
+   class, a layout. Flows are counted there like any other component, and get one thing more: a
+   diff comment of their own, **🔀 Flow** and its label, posted below for each changed Flow. A Flow
+   whose only change is its status, activated or deactivated, gets no diff comment and is named
+   nowhere, so read the diff for those. A **Flow deletion** section appears when versions are being
+   removed. The comment names no other deleted component: the list, one row per component, is in
+   the files the check kept, and the end of this step opens it
+4. **Tests and coverage.** The **Apex tests** row: the coverage against the target every time it
+   was measured, or why the tests did not run, and a folded **🧪 Apex test classes** block when the
    job ran named test classes. Failures only when there are failures
 
 Reading it in that order takes two minutes. On US-052 it reads green, a small number of components
 updated and **nothing deleted**, and it is right about all of it. The exact counts are yours, not
 the lab's: they compare your branch with what your `helios-integration` holds today, so a story that
-touches one file can still update a few components when your org is behind. `deleted: 0` is the
-number that matters here, and it is the one step 4 is about. The comment also tells you what it
+touches one file can still update a few components when your org is behind. No `deleted` in the
+**Metadata** row is what matters here, and it is what step 4 is about. The comment also tells you what it
 cannot do for you, which is step 3.
+
+**The list of components, without leaving VS Code.** The comment gives counts, and the check kept
+the list. Open the **DevOps Pipeline** panel and turn **Show feature branches** **(1)** on: Mariia's
+branch appears, with the number of her Pull Request next to it **(2)**. Click the number.
+
+![The DevOps Pipeline panel, with Mariia's Pull Request next to its branch](../../_assets/annotated/vscode/pipeline-review-pr.png)
+
+The window of the Pull Request opens. On its **Validation** tab, click **Files** **(1)**, then
+`deployment-components.csv` **(2)**. It opens in VS Code: one row per component of the package,
+with its **Status**, `Created`, `Updated`, `Deleted` or `Unchanged`. A deleted component would
+be named there. `xls/deployment-components.xlsx`, on the next row, is the same list for a
+spreadsheet.
+
+![The Files button of the validation job of Mariia's Pull Request, opened on its reports](../../_assets/annotated/vscode/pipeline-pr-window-review-files.png)
+
+Your number is not `#64`. If the window has no **Files** button, your sfdx-hardis is older than
+the feature: **Open job** leads to the same files on GitHub, in the **Summary** of the run, under
+**Artifacts**, **sfdx-hardis reports**.
 
 ### 3. Read the diff, looking for what the robot cannot see
 
@@ -117,7 +145,7 @@ column*. It says nothing about a field going. That is the gap a review is for: t
 thing, the description another, and only one of them is what gets deployed.
 
 **Nothing in the pipeline can catch that.** A layout with one field fewer is a valid deployment, the
-counts line says `updated: 1`, and only somebody who knows the org can see what is missing.
+**Metadata** row counts the layout as one more component `updated`, and only somebody who knows the org can see what is missing.
 
 ### 5. Ask for the change, on the line
 
@@ -157,9 +185,11 @@ When the checks are green, merge with **Squash and merge**, as for every feature
 1.6): the two commits become one line in the history of `integration`, titled like the Pull Request.
 On a real project, this is where you click **Approve** first.
 
-### 7. Delete the branch
+### 7. See the branch go
 
-GitHub offers the button. Take it.
+The line under the merge says the branch was **deleted**: your fork does it for every merged
+Pull Request, and so should your real project (**Settings > General > Automatically delete head
+branches**). The major branches are safe from it, because a protected branch cannot be deleted.
 
 <details markdown="1"><summary>Under the hood: what produced the comment you just read</summary>
 
@@ -173,7 +203,8 @@ and then posted the comment through the GitHub API with the token the workflow a
 Request does not fill up with twenty robot comments. It finds itself again through a hidden marker
 carrying a message key, and there are in fact **two** such comments, each updated independently: one
 for the check job, one for the merge job. A third one collects the deployment actions, and Flows get
-one each.
+one each, except a Flow whose only change is its status, which gets none. A
+comment is capped at 50,000 characters on GitHub: above that, it says what it shortened.
 
 The counts it prints come from what Salesforce reported back about the deployment, not from the git
 diff. The two can differ, and when they do the deployment is the truth: it is what the org received,
@@ -182,7 +213,7 @@ or would have received.
 Deletions are the weak spot. `hardis:work:save` writes `manifest/destructiveChanges.xml` when a
 contributor removes something, and a contributor can produce one **without meaning to**, by
 unticking something in the selection screen after it was committed. The comment gives that a number
-in the counts line, and a table only when Flows are involved. If a Pull Request's counts show
+in the **Metadata** row, and a table only when Flows are involved. If a Pull Request's counts show
 anything deleted, the comment has told you everything it is going to: the rest is the diff.
 
 <!-- command-links:start -->
@@ -204,13 +235,14 @@ Command documentation: [hardis:project:deploy:smart](https://sfdx-hardis.cloudit
 The scenario already ran: each one is used once. The Pull Request is in your fork, open or merged.
 
 **The checks never run after Mariia's fix.**
-Actions are disabled, or the JWT secrets are missing for `integration`. [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md).
+Actions are disabled, or `SFDX_AUTH_URL_INTEGRATION`, the secret `integration` still logs in with, is
+missing. **Training: Level 3 > Set up my training environment** writes it again.
 
 **You merged before the fix.**
-Then `Total_Capacity_kW__c` is off the layout in `integration`. Run the fix scenario anyway: it
-opens the fix as a new Pull Request from the same branch, and you review and merge that one. If you
-already deleted her branch, click **Restore branch** at the bottom of the merged Pull Request
-first.
+Then `Total_Capacity_kW__c` is off the layout in `integration`, and the merge deleted Mariia's
+branch, which her fix starts from. Click **Restore branch** at the bottom of the merged Pull
+Request, then run the fix scenario: it opens the fix as a new Pull Request from the same branch, and
+you review and merge that one.
 
 ## Check your work
 

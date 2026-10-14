@@ -5,17 +5,21 @@ description: "Ouvrez une Pull Request GitHub, lisez le contrôle de déploiement
 level: 1
 lab: 6
 lang: fr
-source_rev: "9f4eae623f9e0d447b4576a156064f2db73ad5de"
+source_rev: "3f527fc39c085666e55c195cd2529a53629e507d"
 screenshots:
   - annotated/web/github-pr-checks
   - annotated/web/github-pr-comment
+  - annotated/vscode/pipeline-cards-first-pr--my-pull-request
+  - annotated/vscode/pipeline-pr-window-validation
+  - annotated/vscode/pipeline-pr-window-running
+  - annotated/vscode/pipeline-pr-window-files
   - annotated/web/github-pr-merge
   - annotated/vscode/devops-pipeline--deployment-status
   - annotated/web/github-pr-deployed
   - annotated/vscode/work-save-completed
   - annotated/web/github-pr-merge-squash
 depends_on:
-  commands: [hardis:project:deploy:smart]
+  commands: [hardis:project:deploy:smart, hardis:git:artifacts:download]
   flags: [--check]
   config: [testLevel, apexTestsMinCoverageOrgWide, genericTicketingProviderRegex, genericTicketingProviderUrlBuilder, genericTicketingProviderDetailsUrlBuilder]
   panels: [pipeline]
@@ -26,7 +30,7 @@ depends_on:
 
 **Niveau** : 1 Contributeur, les bases
 
-**Durée** : ~20 min
+**Durée** : ~20 min<!-- observed --> (observé : médiane 21 min, 9 participants, le plus rapide 12 min)<!-- /observed -->
 
 **Vous allez** : faire contrôler votre travail par un robot avant qu'un humain le fasse, lire ce
 qu'il dit, et mettre US-014 dans l'org d'intégration partagée.
@@ -111,8 +115,8 @@ Ouvrez l'onglet **Checks** **(1)**. Deux d'entre eux comptent ici, et les deux d
 
 | Contrôle                                      | Ce qu'il fait                                                                                  |
 |-----------------------------------------------|------------------------------------------------------------------------------------------------|
-| **Simulate Deployment (sfdx-hardis)** **(3)** | Déploie votre métadonnée dans `helios-integration` en mode validation, et lance les tests Apex |
-| **Mega-Linter** **(2)**                       | Lance les linters de qualité de code sur le repository                                         |
+| **Simulate Deployment (sfdx-hardis)** **(2)** | Déploie votre métadonnée dans `helios-integration` en mode validation, et lance les tests Apex |
+| **Mega-Linter** **(3)**                       | Lance les linters de qualité de code sur le repository                                         |
 
 ![L'onglet Checks d'une Pull Request, listant les jobs qui ont tourné](../../_assets/annotated/web/github-pr-checks.png)
 
@@ -143,17 +147,26 @@ Quand le contrôle de déploiement se termine, sfdx-hardis écrit un commentaire
 
 ![Le commentaire sfdx-hardis sur une Pull Request](../../_assets/annotated/web/github-pr-comment.png)
 
-1. **La bannière** **(1)** dit si le déploiement simulé a réussi
-2. **Ce qui changerait** **(2)**. Pas une liste de vos fichiers : sfdx-hardis envoie le package
-   entier, `manifest/package.xml`, et Salesforce répond quelle part en diffère : `36 sent to the org,
-   7 would change (1 created, 6 updated, 0 deleted, 29 unchanged)`. Le composant créé est votre
-   champ, et les composants mis à jour incluent la présentation de page et les deux permission sets
-   que vous avez modifiés
-3. **La couverture Apex** **(3)**, face à l'objectif que fixe ce projet
-4. **Les tickets** **(4)**, les stories qu'il a reconnues dans votre nom de branche et vos messages
-   de commit, chacune avec son titre et un lien vers sa page dans le backlog
+1. **Le verdict** **(1)**, sous la bannière : **✅ Ready to merge into `integration`**, une ligne
+   qui dit que le déploiement a seulement été simulé dans l'org `integration`, donc que rien n'y a
+   changé, et **How to merge: use Squash and merge, so the User Story arrives as one commit.**
+   L'étape 4 fait exactement cela
+2. **Apex tests** **(2)**, une ligne du tableau **Check | Result** sous le verdict : la couverture,
+   face à l'objectif que fixe ce projet
+3. **Metadata** **(3)**, la première ligne de ce tableau : ce qui changerait. Pas une liste de vos
+   fichiers : sfdx-hardis envoie le package entier, `manifest/package.xml`, et Salesforce répond
+   quelle part en diffère : `7 components would change (1 created, 6 updated), 36 validated`. Le
+   composant créé est votre champ, et les composants mis à jour incluent la présentation de page et
+   les deux permission sets que vous avez modifiés. Plus bas, cliquez sur **📋 7 components would
+   change in the org** pour ouvrir un tableau de ces changements, par type de composant : le champ
+   est la ligne **CustomField**
+4. **Les tickets** **(4)**, repliés sous **🎫 1 ticket** vers le bas : les stories qu'il a reconnues
+   dans votre nom de branche et vos messages de commit, chacune avec son titre et un lien vers sa
+   page dans le backlog
 
-En dessous, un résumé de vos commits et le nom du job qui a écrit le commentaire.
+Le tableau a une ligne de plus, **Quick Deploy** : le job de merge peut réutiliser cette validation,
+donc les tests Apex ne tourneront pas une deuxième fois. L'étape 5 le montre à l'œuvre. Le
+commentaire se termine par le nom du job qui l'a écrit.
 
 <details markdown="1"><summary>Sous le capot : d'où viennent les titres des stories</summary>
 
@@ -177,9 +190,80 @@ Azure Boards ou ServiceNow à la place.
     Salesforce range légèrement différemment dans votre org peut passer de inchangé à mis à jour, et
     ce n'est pas un problème : ce qui compte, c'est que votre champ soit celui qui est créé.
 
+**Le même commentaire, sans quitter VS Code.** Revenez dans VS Code et ouvrez le panneau **DevOps
+Pipeline**. Sous **Project Contribution Workflow**, la carte **My Pull Request** **(1)** porte
+maintenant le nom de votre Pull Request. Cliquez dessus.
+
+Si la carte affiche encore *Pull Request not created yet*, le panneau montre ce qu'il savait avant
+que vous la créiez : cliquez sur **Refresh** dans sa barre du haut, et la carte se met à jour. Elle
+le fait aussi toute seule en moins d'une minute.
+
+![La carte My Pull Request du panneau DevOps Pipeline, qui nomme la Pull Request de US-014](../../_assets/annotated/vscode/pipeline-cards-first-pr--my-pull-request.png)
+
+Une fenêtre s'ouvre sur votre Pull Request, et elle rassemble ce que GitHub répartit sur plusieurs
+pages :
+
+1. **Les onglets** **(1)** : **Validation** est le contrôle de déploiement, **Code Quality** est
+   Mega-Linter, et **Deployment** se remplit une fois le merge fait. **Tickets** contient la story
+   trouvée dans le nom de votre branche
+2. **Le job** **(2)** : son résultat, sa durée, **Open job** pour son log sur GitHub,
+   **Open comment** pour le commentaire sur GitHub, et **Files**
+3. **Le commentaire** **(3)**, celui que vous venez de lire, mot pour mot
+
+![La fenêtre d'une Pull Request dans VS Code, sur son onglet Validation](../../_assets/annotated/vscode/pipeline-pr-window-validation.png)
+
+Votre numéro n'est pas `#46`, et votre commentaire commence par la bannière vue sur GitHub.
+
+**Vous l'avez ouverte pendant qu'un contrôle tournait encore ?** La fenêtre le dit, et vous n'avez
+pas besoin de GitHub pour savoir où en est le contrôle :
+
+1. **L'onglet** **(1)** porte un spinner tant que son job tourne, **Code Quality** compris, et
+   l'étape **Validation** au-dessus des onglets bouge
+2. **Le job en cours** **(2)** vient en premier : quand il a démarré, depuis combien de temps il
+   tourne, compté chaque seconde, et **Open job** pour son log sur GitHub
+3. **En dessous** **(3)**, ce que l'exécution précédente a laissé. Sur une première Pull Request
+   il n'y a encore rien : le commentaire arrive quand le job se termine
+
+![La fenêtre d'une Pull Request dans VS Code pendant que son contrôle de déploiement tourne](../../_assets/annotated/vscode/pipeline-pr-window-running.png)
+
+Rien à cliquer : la fenêtre interroge GitHub toutes les vingt secondes. Quand le job se termine,
+sa ligne disparaît et le commentaire prend sa place, avec la durée du job.
+
+Cliquez maintenant sur **Files** **(1)**. Le contrôle a gardé ses rapports, et sfdx-hardis les liste
+sous le job **(2)**. Cliquez sur l'un d'eux pour l'ouvrir dans VS Code : `deployment-components.csv`
+est la liste derrière **7 components would change**, une ligne par composant.
+
+![Le bouton Files du job de validation, ouvert sur les rapports que le job a gardés](../../_assets/annotated/vscode/pipeline-pr-window-files.png)
+
+Vous n'aurez pas besoin de ces fichiers aujourd'hui. Ils sont là pour le jour où un contrôle passe
+au rouge et où le commentaire ne suffit pas, et ils vous évitent un détour par GitHub.
+
+<details markdown="1"><summary>Sous le capot : d'où viennent les fichiers</summary>
+
+Le job de contrôle publie son dossier `hardis-report` sur GitHub, sous la forme d'un artifact nommé
+**sfdx-hardis reports**. **Files** lance `sf hardis:git:artifacts:download` avec l'adresse du job :
+la commande demande à GitHub les artifacts de cette exécution, les télécharge et les décompresse
+dans `hardis-report/job-artifacts/` de votre projet. Git ignore ce dossier, donc les copies ne
+finissent jamais dans un commit. Recliquez sur **Files** plus tard et rien n'est téléchargé deux
+fois, sauf si le job a tourné de nouveau.
+
+GitHub ne garde pas les artifacts indéfiniment. Une fois disparus, les fichiers déjà téléchargés
+restent, et un job que vous n'avez jamais ouvert indique que ses fichiers ont expiré.
+
+<!-- command-links:start -->
+Documentation de la commande : [hardis:git:artifacts:download](https://sfdx-hardis.cloudity.com/hardis/git/artifacts/download/)
+<!-- command-links:end -->
+
+</details>
+
+!!! note "Pas de bouton Files ?"
+    Il demande un sfdx-hardis récent. Ouvrez le panneau **Setup** du [Lab 1.1](1-1-install-vs-code-and-sfdx-hardis.md) :
+    quand la carte `sfdx-hardis` affiche **Upgrade**, cliquez dessus, puis rouvrez la fenêtre. **Open job**
+    mène aux mêmes fichiers en attendant : le **Summary** de l'exécution, puis **Artifacts**.
+
 ### 4. Merger
 
-Les deux contrôles verts, le commentaire dit succès. De retour sur l'onglet **Conversation**, faites
+Les deux contrôles verts, le commentaire dit **Ready to merge**. De retour sur l'onglet **Conversation**, faites
 défiler jusqu'en bas : la boîte de merge affiche **All checks have passed** et **No conflicts with
 base branch**, et le bouton est actif.
 
@@ -213,8 +297,12 @@ lit le release manager quand il promeut.
 GitHub retient la méthode que vous avez choisie la dernière fois, vérifiez donc l'étiquette du bouton
 avant chaque merge.
 
-Supprimez ensuite la branche. GitHub propose un bouton pour cela. Une branche mergée qui traîne est
-une chose de plus dans la liste de tout le monde, sans aucun bénéfice.
+Vous n'avez pas à supprimer la branche : votre fork le fait au merge, et GitHub le dit sous la
+zone de merge. Une branche mergée qui traîne est une chose de plus dans la liste de tout le monde,
+sans aucun bénéfice, et un vrai projet active donc le même réglage (**Settings > General >
+Automatically delete head branches**). Si la branche est toujours là, votre fork a été mis en place
+avant que le cours n'active ce réglage : cliquez sur **Delete branch**, et cochez-le dans votre
+fork.
 
 !!! note "À quoi sert le linter, et pourquoi son commentaire peut afficher un avertissement"
     MegaLinter lit tout le repository, pas seulement votre modification, et signale tout ce qui enfreint
@@ -226,6 +314,14 @@ une chose de plus dans la liste de tout le monde, sans aucun bénéfice.
     et un job qui échoue bloque le merge, comme le contrôle de déploiement. Le
     [Lab 2.5](../level-2-contributor-advanced/2-5-pass-code-quality-and-apex-test-coverage.md) vous fait rencontrer une trouvaille qui ne fait qu'avertir, et un contrôle
     qui bloque.
+
+!!! warning "Le bandeau jaune qui suit"
+    Une fois qu'`integration` a bougé, la page d'accueil de votre fork peut afficher un bandeau
+    jaune : **integration had recent pushes**, avec un bouton **Compare & pull request**. N'y touchez
+    pas. Il propose d'envoyer `integration` vers le repository **d'origine**, celui que tous les
+    participants ont forké, et ce n'est jamais ce que vous voulez. Si vous en avez ouvert une par
+    erreur, **Close pull request** en bas de sa page l'annule, et rien de ce qui est à vous n'est
+    perdu : votre branche `integration` vit dans votre fork et y reste.
 
 ### 5. Regarder le vrai déploiement
 
@@ -241,7 +337,8 @@ répond à "est-ce que mon travail est dans l'org" sans quitter l'éditeur.
 
 La capture a été prise plus loin dans le cours, avec les branches des collègues à gauche
 d'`integration`. La vôtre ne montre que `integration` et `uat` : c'est la pastille **(1)** sur la
-flèche vers l'org qu'il faut regarder.
+flèche vers l'org qu'il faut regarder, et la légende sous le diagramme **(2)** dit ce que chaque
+couleur signifie.
 
 La pastille est aussi un lien : cliquez dessus et GitHub s'ouvre sur le log de cette exécution,
 **Process Deployment (sfdx-hardis)**, qui prend environ trois minutes. Vous n'avez pas besoin de le
@@ -253,12 +350,15 @@ de merger :
 
 ![Le commentaire que sfdx-hardis écrit après le déploiement de merge](../../_assets/annotated/web/github-pr-deployed.png)
 
-1. **Deployment successful** **(1)**, et cette fois l'org a vraiment changé
-2. **Ce qui a changé** **(2)**, sous la même forme que ce que le contrôle annonçait : `7 changed`
-   là où le contrôle disait `7 would change`
-3. **Quick Deploy** **(3)**. Le job de merge n'est pas parti de rien. Il a libéré la validation que
-   le contrôle de Pull Request avait déjà faite, c'est pourquoi il n'a pas relancé les tests Apex une
-   deuxième fois et pourquoi il a pris deux minutes plutôt que cinq
+1. **Le verdict** **(1)** : **✅ Deployed to `integration`**, et cette fois l'org a vraiment changé
+2. **Metadata** **(2)**, sous la même forme que ce que le contrôle annonçait, avec en plus la
+   façon dont il a été déployé : **✅ Full Quick Deploy: 7 components changed (1 created, 6
+   updated)** là où le contrôle disait `7 components would change`. *Full*, parce que ce projet
+   envoie le package entier à chaque fois. *Quick Deploy*, parce que le job de merge n'est pas
+   parti de rien : il a déployé la validation que le contrôle de Pull Request avait déjà faite,
+   et c'est pourquoi il a pris deux minutes plutôt que cinq
+3. **Apex tests** **(3)** : **Already run during the validation**. Le Quick Deploy a repris
+   l'exécution des tests du contrôle, donc aucun test n'a tourné à nouveau
 
 Ouvrez ensuite `helios-integration` depuis **Orgs Manager** et regardez une installation.
 
@@ -312,6 +412,21 @@ projet, sera cette boucle.
 
 ## En cas de problème
 
+**La carte My Pull Request affiche encore *Pull Request not created yet*.**
+Trois causes, dans l'ordre où elles arrivent :
+
+- le panneau n'a pas regardé depuis que vous avez créé la Pull Request. Cliquez sur **Refresh** dans
+  la barre du haut du panneau **DevOps Pipeline**
+- VS Code est sur une autre branche. La carte parle de la branche sur laquelle vous êtes : regardez
+  en bas à gauche de la barre d'état, et si elle n'indique pas `features/US-014-panels-required`,
+  cliquez dessus et choisissez cette branche
+- la Pull Request a été ouverte sur le repository d'origine au lieu de votre fork. Son adresse
+  commence alors par `github.com/hardisgroupcom/`, et la carte ne regarde que dans votre fork.
+  Fermez-la là-bas, et rouvrez-la comme le dit l'étape 1, avec **base** dans votre propre fork
+
+Aucune n'arrête le lab : les contrôles, le commentaire et le merge des étapes 2 à 4 se passent tous
+sur GitHub, et c'est là que le lab est vérifié.
+
 **Les contrôles ne démarrent jamais.**
 Actions est encore désactivé sur votre fork (`github.com/my-username/sfdx-hardis-training`). GitHub
 cache cet interrupteur derrière une bannière qu'aucune commande ne peut atteindre : ouvrez l'onglet
@@ -336,7 +451,7 @@ set sans le champ. Refaites le [Lab 1.5, étape 3](1-5-retrieve-commit-and-publi
 
 **Le contrôle reste bloqué sur "Expected".**
 Le workflow attend un job qui ne tournera jamais, en général parce que la base de la Pull Request
-est le repository d'origine et non votre fork (`github.com/my-username/sfdx-hardis-training`).
+est le repository d'origine et non votre fork.
 Fermez-la et rouvrez-la avec la bonne base.
 
 **La boîte de merge dit Merging is blocked, et le bouton est gris.**
@@ -352,8 +467,9 @@ robot sur votre ordinateur, puis lancez **Training: Level 1 > Trigger my workflo
 part qui relance les contrôles.
 
 **Le déploiement réussit mais le champ n'est pas dans l'org.**
-Regardez la liste des composants déployés dans le commentaire. Si le champ n'y est pas, c'est qu'il
-n'est pas dans `manifest/package.xml`, et le [Lab 1.5, étape 6](1-5-retrieve-commit-and-publish-your-changes.md#6-lire-le-package-avant-de-pousser) est là où vous le lisez.
+Ouvrez la section repliée **📋 ... components would change in the org** du commentaire, sous le
+tableau des contrôles. Si elle n'a pas de
+ligne **CustomField**, c'est que le champ n'est pas dans `manifest/package.xml`, et le [Lab 1.5, étape 6](1-5-retrieve-commit-and-publish-your-changes.md#6-lire-le-package-avant-de-pousser) est là où vous le lisez.
 
 ## Vérifiez votre travail
 

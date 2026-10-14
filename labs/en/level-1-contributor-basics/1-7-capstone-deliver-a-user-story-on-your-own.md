@@ -20,7 +20,7 @@ depends_on:
 
 **Level**: 1 Contributor basics
 
-**Time**: ~25 min
+**Time**: ~30 min<!-- observed --> (observed: median 32 min, 11 learners, fastest 11 min)<!-- /observed -->
 
 **You will**: do the whole loop again with no step-by-step, which is the only way to find out
 whether you learned it.
@@ -111,29 +111,31 @@ You finished Level 1.
 Welcome page > **Training: Level 1** > **Claim my badge**.
 
 It checks the whole level again first and refuses to claim anything that does not pass: a claim that
-would be rejected is a claim not worth opening. Then it opens the claim form of the training
-repository in your browser, with the level, your username, your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`) and your receipts already in
+would be rejected is a claim not worth opening. It then asks one question, your Trailblazer
+username, because your badge page links to your Trailhead profile: it is the last part of the
+address of that profile, and the command says where to find it. Then it opens the claim form of the training
+repository in your browser, with the level, that username, your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`) and your receipts already in
 it. One field is not filled in: pick your level in the **Level** dropdown, because GitHub does
 not prefill a dropdown from a link and the form refuses to submit while it says *None*. Then tick
 the three boxes and click **Create**.
 
-Those three boxes are yours to tick, and nothing ticks them for you. They say your fork (`github.com/my-username/sfdx-hardis-training`) is public
+Those three boxes are yours to tick, and nothing ticks them for you. They say your fork is public
 and your GitHub handle becomes public in the training repository, which is a decision about your
 name rather than a formality.
 
 !!! tip "If the course helped you"
     [hardisgroupcom/sfdx-hardis](https://github.com/hardisgroupcom/sfdx-hardis) is the open source
     project this whole course is about. A star is how a project like it stays visible: open its
-    page and click **Star** **(1)**, at the top right. Give it a star if you liked this course!
+    page and click **Star** **(1)**, on the right of the repository name. Give it a star if you liked this course!
 
     ![The Star button of the sfdx-hardis repository on GitHub](../../_assets/annotated/web/github-star-sfdx-hardis.png)
 
-A job then clones your fork (`github.com/my-username/sfdx-hardis-training`), re-runs every check above against it, and answers on the issue. Nobody
+A job then clones your fork, re-runs every check above against it, and answers on the issue. Nobody
 reviews it by hand, so it usually takes a couple of minutes. If something does not verify, the
 comment names the exact lab and what it looked for, you fix it, and you edit the issue to run it
 again.
 
-Your fork (`github.com/my-username/sfdx-hardis-training`) has to be **public** for the audit to read it. If it is private, the command offers to
+Your fork has to be **public** for the audit to read it. If it is private, the command offers to
 make it public.
 
 !!! note "It is a badge, not a certification"
@@ -154,3 +156,13 @@ teammate who edited the same flow as you.
 It is recommended for any contributor, and **required** before Level 3.
 
 [Continue to Level 2 - Contributor advanced](../level-2-contributor-advanced/index.md){ .md-button .md-button--primary }
+
+## On a real project
+
+Your own team has no pipeline like this one yet? Setting one up on an org with years of history in
+it is what [Cloudity](https://sfdx-hardis.cloudity.com/salesforce-devops-home/#get-help-from-cloudity), the company behind sfdx-hardis and this course, does for its
+customers: setup, training and support. It is one of its practices, next to Agentforce, Revenue
+Cloud, Field Service and [the others](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1).
+
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en.png){ .cloudity-banner .wide-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1)
+[![Cloudity, Salesforce consulting: Agentforce, Data Cloud, Revenue Cloud, Field Service, Marketing Cloud, Integration, Managed Services, DevOps](../../_assets/brand/cloudity-services-en-narrow.png){ .cloudity-banner .narrow-only loading=lazy }](https://cloudity.com/services/?utm_source=sfdx-hardis-training&utm_medium=referral&utm_campaign=capstone-1)

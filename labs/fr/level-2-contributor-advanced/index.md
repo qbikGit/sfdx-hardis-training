@@ -4,12 +4,12 @@ description: "Affrontez ce que les vraies livraisons Salesforce vous envoient : 
 id: l2-home
 level: 2
 lang: fr
-source_rev: "4a78975a30a1ff4e3692cda141afda6db9cab7d4"
+source_rev: "91459978a9663cbf679656da2b87bbd7b1137486"
 ---
 
 # Niveau 2 - Contributeur Salesforce DevOps avancé
 
-**Durée** : environ 4 h.
+**Durée** : environ 6 h 15.<!-- observed --> Observé sur les Labs 2.1 à 2.9 : médiane 8 h 09, 3 participants, le plus rapide 6 h 04.<!-- /observed -->
 
 **Prérequis** : le [Niveau 1](../level-1-contributor-basics/index.md). Pas facultatif : chaque lab
 d'ici suppose que la boucle est automatique pour vous.
@@ -33,15 +33,15 @@ jours.
 
 | Lab                                                                   | Titre                                                                   | Durée  |
 |-----------------------------------------------------------------------|-------------------------------------------------------------------------|--------|
-| [2.1](2-1-backpromote-your-teammates-work.md)                         | Backpromote : remettre votre org de dev au niveau de l'équipe           | 15 min |
-| [2.2](2-2-fix-a-missing-dependency-deployment-error.md)               | Corriger une erreur de déploiement due à une dépendance manquante       | 25 min |
-| [2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md)       | Réparer des enregistrements cassés avec une deployment action Apex      | 30 min |
-| [2.4](2-4-ship-reference-data-and-a-batch-with-deployment-actions.md) | Livrer des données de référence et un batch avec des deployment actions | 30 min |
+| [2.1](2-1-backpromote-your-teammates-work.md)                         | Backpromote : remettre votre org de dev au niveau de l'équipe           | 20 min |
+| [2.2](2-2-fix-a-missing-dependency-deployment-error.md)               | Corriger une erreur de déploiement due à une dépendance manquante       | 35 min |
+| [2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md)       | Réparer des enregistrements cassés avec une deployment action Apex      | 45 min |
+| [2.4](2-4-ship-reference-data-and-a-batch-with-deployment-actions.md) | Livrer des données de référence et un batch avec des deployment actions | 45 min |
 | [2.5](2-5-pass-code-quality-and-apex-test-coverage.md)                | Passer la barrière de qualité de code et la couverture de tests Apex    | 30 min |
-| [2.6](2-6-permission-sets-and-profiles.md)                            | Permission sets, profils, et pourquoi une autorisation disparaît        | 25 min |
-| [2.7](2-7-resolve-a-git-merge-conflict.md)                            | Résoudre un conflit de merge Git avec un collègue                       | 35 min |
-| [2.8](2-8-recover-from-committing-the-wrong-metadata.md)              | Se remettre d'avoir commité la mauvaise métadonnée                      | 20 min |
-| [2.9](2-9-capstone-deliver-a-user-story-that-has-it-all.md)           | Épreuve finale : livrer une User Story qui a tout                       | 30 min |
+| [2.6](2-6-permission-sets-and-profiles.md)                            | Permission sets, profils, et pourquoi une autorisation disparaît        | 30 min |
+| [2.7](2-7-resolve-a-git-merge-conflict.md)                            | Résoudre un conflit de merge Git avec un collègue                       | 30 min |
+| [2.8](2-8-recover-from-committing-the-wrong-metadata.md)              | Se remettre d'avoir commité la mauvaise métadonnée                      | 25 min |
+| [2.9](2-9-capstone-deliver-a-user-story-that-has-it-all.md)           | Épreuve finale : livrer une User Story qui a tout                       | 1 h 40 |
 
 ## Le menu Training
 
@@ -53,16 +53,16 @@ seul menu. Ouvrez la **Welcome page**, et sous **CUSTOM MENUS** cliquez sur la c
 
 Elles sont huit, et les labs les appellent par ces noms :
 
-| Commande                           | Ce qu'elle fait                                                                                       |
-|------------------------------------|-------------------------------------------------------------------------------------------------------|
-| **Set up my training environment** | Reconstruit une scratch org qui a expiré, et pointe la pipeline dessus                                |
-| **Where am I?**                    | Dit à quel niveau et à quel lab vous en êtes, et ce qu'il faut faire ensuite                          |
-| **Simulate my teammates**          | Crée les branches et Pull Requests de collègues dont un lab a besoin                                  |
-| **Set up one of my training orgs** | Déploie l'application Helios et ses données dans une org que vous choisissez                          |
-| **Check my work**                  | Vérifie le lab que vous venez de terminer                                                             |
-| **Claim my badge**                 | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                             |
-| **Update my course**               | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration` |
-| **Reset this level**               | Remet votre repository au début du Niveau 2                                                           |
+| Commande                           | Ce qu'elle fait                                                                                                                                          |
+|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Set up my training environment** | Reconstruit une scratch org qui a expiré, et pointe la pipeline dessus                                                                                   |
+| **Where am I?**                    | Dit à quel niveau et à quel lab vous en êtes, et ce qu'il faut faire ensuite                                                                             |
+| **Simulate my teammates**          | Crée les branches et Pull Requests de collègues dont un lab a besoin                                                                                     |
+| **Set up one of my training orgs** | Déploie l'application Helios et ses données dans une org que vous choisissez                                                                             |
+| **Check my work**                  | Vérifie le lab que vous venez de terminer                                                                                                                |
+| **Claim my badge**                 | Contrôle le niveau entier, puis ouvre votre demande de badge déjà remplie                                                                                |
+| **Update my course**               | Apporte les changements reçus par le cours depuis votre fork, par une Pull Request vers `integration`                                                    |
+| **Reset this level**               | Recommence le Niveau 2 : `integration`, et si vous le voulez les branches des labs et les orgs ([Recommencer le cours](../help.md#recommencer-le-cours)) |
 
 Il y a un menu par niveau, et chacun ne contient que ce dont ce niveau a besoin : rien de ce que vous
 avez sous les yeux ne concerne un lab que vous n'avez pas encore atteint.

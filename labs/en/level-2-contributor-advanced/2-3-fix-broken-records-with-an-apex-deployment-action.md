@@ -24,7 +24,7 @@ depends_on:
 
 **Level**: 2 Contributor advanced
 
-**Time**: ~30 min
+**Time**: ~45 min<!-- observed --> (observed: median 48 min, 12 learners, fastest 16 min)<!-- /observed -->
 
 **You will**: hit a failure that no amount of metadata fixing solves, and learn the tool that exists
 for it: a deployment action.
@@ -91,7 +91,7 @@ The fix takes a minute, and the org has already done it: in `helios-dev` the ent
 from both permission sets the moment the field became required. Bring them down: **Commit changes**,
 tick `Helios_Delivery_Crew` and `Helios_Delivery_Manager`, retrieve. Source Control shows each of
 them losing its `Crew_Size__c` entry and nothing else. Commit, **Save / Publish** again. The
-sfdx-hardis comment even said so, under each error, with a link to the rule.
+sfdx-hardis comment even said so, in the tip folded under each error, with a link to the rule.
 
 !!! note "This is a good error"
     It is precise, it names both offending components, and the fix is obvious once you know the rule.
@@ -238,8 +238,13 @@ Files wait in **Source Control**, none of them committed: the four class files a
 you created in step 5, and the action the editor wrote under `scripts/actions/`, in a file named
 after your Pull Request. Commit them all, then **Save / Publish**.
 
-The check passes again, and its comment now has a **Post-deployment Actions Results** table: your
-backfill, **skipped**, because this is the validation job. Merge.
+The check passes again, and its comment now has a **Deployment actions** row in its table: your
+backfill, **🕒 1 after the merge**, because this is the validation job and it changes nothing in the
+org. Open the folded **🛠️ Deployment actions of this job (1)** below it: the backfill, **after**
+the deployment, with the reason **Runs after the merge only**.
+
+**Now merge the Pull Request.** On its GitHub page, choose **Squash and merge**, then click **Squash
+and merge** and **Confirm squash and merge**, as in [Lab 1.6](../level-1-contributor-basics/1-6-pull-request-deployment-check-and-merge.md).
 
 The deployment job to `integration` runs it, for real, right **after** the deployment: open its log
 in the **Actions** tab and you find the deployment, then the action starting, then the
@@ -297,6 +302,14 @@ Command documentation: [hardis:project:deploy:smart](https://sfdx-hardis.cloudit
 - No manual step performed by anybody in any org
 
 ## If it goes wrong
+
+**The action file is called `.sfdx-hardis.draft.yml`, or the check stops on *Draft deployment actions file found*.**
+You added the action while the panel knew no Pull Request for your branch: the **My Pull Request**
+card read *Pull Request not created yet*, so the action was kept in a draft. The pipeline only reads
+`scripts/actions/.sfdx-hardis.` followed by the number of the Pull Request and `.yml`, so a draft, or
+a file renamed to a name of your own, is never run. Once your Pull Request exists, open the
+**DevOps Pipeline** panel again and click **Refresh**: it renames the draft after your Pull Request
+and tells you so in a notification. Commit the renamed file, then **Save / Publish**.
 
 **The action does not appear in the Deployment Actions tab.**
 The panel reads the Pull Request from your fork (your own copy of the course repository on GitHub, for example `github.com/my-username/sfdx-hardis-training`). If the Pull Request was opened against the original

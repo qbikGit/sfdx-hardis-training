@@ -5,7 +5,7 @@ description: "Votre org de développement est en retard sur integration. Faites-
 level: 2
 lab: 1
 lang: fr
-source_rev: "4a78975a30a1ff4e3692cda141afda6db9cab7d4"
+source_rev: "b7454067edc4ccbf675224de0d1f09952b6e3b16"
 screenshots:
   - annotated/vscode/sidebar-commands-custom-menu-2--training-menu
   - annotated/web/github-pr-files
@@ -27,7 +27,7 @@ depends_on:
 
 **Niveau** : 2 Contributeur avancé
 
-**Durée** : ~15 min
+**Durée** : ~20 min<!-- observed --> (Labs 2.1 et 2.2 observés ensemble : médiane 57 min, 14 participants, le plus rapide 28 min)<!-- /observed -->
 
 **Vous allez** : rapatrier dans votre propre org de dev la story mergée par un collègue, décider
 quoi garder quand l'outil vous le demande, et apprendre ce qu'un backpromote ne fera jamais pour
@@ -178,8 +178,8 @@ Il calcule son plan avant de vous montrer quoi que ce soit :
 1. **Target sandbox** **(1)** est l'org dans laquelle le travail est rapatrié, `helios-dev`
 2. **Parent branch** **(2)** est l'endroit d'où il vient, `integration` telle qu'elle est sur
    GitHub : le panneau fait le fetch lui-même, inutile de faire un pull avant
-3. Les trois lignes **(3)** lisent votre org, listent les Pull Requests mergées dans `integration`,
-   et calculent la différence entre les deux
+3. Les lignes **(3)** lisent votre org, listent les Pull Requests mergées dans `integration`,
+   calculent ce qui y a changé, et le comparent avec ce que contient votre org
 
 ![Le panneau Backpromote calculant son plan](../../_assets/annotated/vscode/backpromote-loading.png)
 
@@ -213,6 +213,8 @@ clic sur une autre ligne ne fait rien :
 
 - **chore: the state a level 2 learner starts from** et **Keep my pipeline configuration**, si vous
   avez fait un reset : des commits, pas des Pull Requests
+- **Point the pipeline at my training orgs**, si vous avez fait le Niveau 1 : le commit que **Set up
+  my training environment** a créé dans le [Lab 1.2](../level-1-contributor-basics/1-2-create-your-dev-hub-scratch-orgs-and-pipeline.md)
 - des dizaines de commits du cours lui-même, dont votre `integration` a hérité quand vous avez fait
   votre copie du repository. Certains se terminent par un numéro entre parenthèses, comme
   **(#77)** : c'est une Pull Request du repository du cours, pas de votre fork. Votre org les a déjà
@@ -308,6 +310,13 @@ Et une chose qu'il fait et que personne n'attend la première fois :
     branche que vous avez oubliée. La branche sur laquelle vous êtes est toujours dans le coin en bas
     à gauche de VS Code.
 
+    Une fois revenu sur votre branche, VS Code peut ensuite demander *Back on `<branch>`. Merge
+    `<parent>` into it so that your next save does not commit the backpromoted metadata as your own
+    work?* Si c'est le cas, cliquez sur **Merge `<parent>`**. Votre org contient maintenant la
+    métadonnée de vos collègues, et sans ce merge votre prochain **Save / Publish** la verrait comme
+    une modification à vous et la mettrait dans votre Pull Request. La question ne vient pas quand
+    vous êtes sur la branche parente elle-même, ni quand votre branche l'a déjà.
+
 L'historique n'est pas sur votre ordinateur non plus. sfdx-hardis note ce qui a atteint votre sandbox
 dans un **commentaire Backpromotes** sur chaque Pull Request qu'il a rapatriée, pour que le
 backpromote suivant sache où commencer, depuis n'importe quelle machine et n'importe quel collègue.
@@ -323,7 +332,8 @@ Documentation de la commande : [hardis:work:backpromote](https://sfdx-hardis.clo
 ## Ce que vous devez voir
 
 Ouvrez `helios-dev` et vérifiez que la story de Romain y est : ouvrez une installation, son champ
-**Signed Off By** est en bas de la colonne des champs, sous **Crew Notes**.
+**Signed Off By** est en bas de la colonne des champs. Le layout le place sous **Crew Notes**, que
+vous ne voyez pas vous-même sur l'enregistrement : le [Lab 1.7](../level-1-contributor-basics/1-7-capstone-deliver-a-user-story-on-your-own.md) n'a accordé ce champ qu'aux équipes.
 
 ## En cas de problème
 
@@ -351,6 +361,16 @@ le backpromote.
 **Le déploiement échoue sur un composant qui dépend d'autre chose.**
 Prenez l'ensemble complet plutôt qu'un sous-ensemble. La métadonnée a des dépendances, et une demi-
 story ne se déploie souvent pas.
+
+**Le déploiement échoue avec `You cannot deploy to a required field: Installation__c.Crew_Size__c`.**
+L'erreur vient du permission set `Helios_Delivery_Manager`, et elle veut dire que votre org est en
+avance sur `integration` : `Crew_Size__c` y est déjà obligatoire, ce que seul le [Lab 2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md) fait. Cela
+suit en général un **Reset this level** quand on était allé au-delà du [Lab 2.3](2-3-fix-broken-records-with-an-apex-deployment-action.md), parce que la
+réinitialisation laissait les orgs telles quelles. Lancez **Training: Level 2 > Set up one of my
+training orgs** sur `helios-dev`, ce que **Reset this level** propose désormais de faire pour vous,
+puis relancez le backpromote. Ou décochez `Helios_Delivery_Manager` dans la liste de l'étape 4 et
+prenez le reste, en sachant que l'accès de Romain au champ sur ce permission set reste alors hors de
+votre org.
 
 **Votre propre travail en cours a été écrasé.**
 Il était dans la liste et vous l'avez pris. Reconstruisez-le dans l'org : il est toujours dans votre

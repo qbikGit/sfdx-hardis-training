@@ -62,8 +62,9 @@ colour means. Click the marker to open the run.
 
 An sfdx-hardis deployment log has the same shape every time:
 
-**One: authentication.** Which org, which mechanism. After [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) this says JWT. If it ever says
-something else, something changed that you did not change.
+**One: authentication.** Which org, which mechanism. On `integration` it says auth URL: the
+shortcut of Level 1, which [Lab 3.1](3-1-configure-the-pipeline-up-to-production.md) left in place. On `preprod` and `main` it says JWT. If it ever
+says something else, something changed that you did not change.
 
 **Two: what to deploy.** The package it computed, and where from. This is the interesting part and
 step 3 is about it.
@@ -100,7 +101,7 @@ org has to genuinely be at the commit the pipeline thinks it is at.
     **Pipeline Settings**, scope **Global Settings** **(1)**, **Deployment** tab **(2)**.
     **Use Delta Deployment** **(3)** shows **Disabled**.
 
-    The Helios app is about fifty components, so a full deployment costs a minute and delta would save
+    The Helios app is about sixty components by now, so a full deployment costs a minute and delta would save
     nothing while adding a way for the course to fail confusingly on a missing dependency. Turn it
     on when a deployment starts costing you real time, which on a real project is soon. There is a
     second key for promotions between major branches,
@@ -108,7 +109,7 @@ org has to genuinely be at the commit the pipeline thinks it is at.
     default for the same reason: a promotion carries more, and is the riskiest place to send less.
 
 Find the line `Components: N deployed` in the log, under *Deployment summary*. On a standard run of
-this course it is a little over fifty. Compare it with the one file of your Pull Request. The gap
+this course it is about sixty. Compare it with the one file of your Pull Request. The gap
 is the cost of having delta off, and it is the argument for turning it on.
 
 ### 4. Know what Smart Deploy is, and what it is not
@@ -128,7 +129,7 @@ Two things are often assumed to be part of it and are not:
 - **Cleaning is not a deployment filter.** It ran on a contributor's machine, at commit time. Step 3
   of the under the hood section below is about that
 
-So the honest answer to "why did it deploy fifty components to change one" is: because nothing was
+So the honest answer to "why did it deploy sixty components to change one" is: because nothing was
 configured to stop it. That is a decision this project made, not a thing the tool does for you.
 
 ### 5. Verify in the org, not in the log
@@ -274,13 +275,24 @@ System.QueryException: List has no rows for assignment to SObject
 Mariia created the group by hand in her own org, in Setup, the way most people create one: nothing
 in her Pull Request creates it.
 
-**The Deployment Actions comment** of her Pull Request lists the three actions under **Failed
-actions (1)**: ❌ for the one that failed, ⏸️ for the two it stopped, each with a checkbox. The
-**Status by org branch** table **(2)** says the same in the `integration` column.
+**The deployment comment** of her Pull Request opens on **⚠️ Deployed to `integration`, but an
+action failed after the deployment**: the org has the new metadata. Under **❌ Failed action** it
+shows the end of the script output, and under **⏸️ Not run, waiting for the failed action** the two
+others.
+
+**The Deployment Actions comment** of her Pull Request sums it up in its verdict, **In integration:
+❌ 1 failed · ⏸️ 2 waiting**, and lists the three actions under **Needs you (1)**: ❌ for the one
+that failed, ⏸️ for the two it stopped, each with a checkbox. The **Status by org** table **(2)**
+says the same in the `integration` column.
 
 ![The Deployment Actions comment with one failed action and two stopped ones](../../_assets/annotated/web/github-pr-deployment-actions-failed.png)
 
-**The DevOps Pipeline**: click `integration`, then the **Deployment Actions** tab. The actions are
+**The DevOps Pipeline** needs two things from you first. Check out `integration` and pull it, from
+the branch name in the status bar and the Source Control panel: the panel reads the actions from
+the branch you have checked out, and Mariia's actions file reached `integration` with her merge.
+Then click **Refresh** in the top bar of the panel, so it reads the deployment that just failed.
+
+Now click `integration`, then the **Deployment Actions** tab. The actions are
 grouped by Pull Request, numbered in the order they run. The **Status** column **(1)** gives each
 action its state in the org of `integration`, and the failed one carries **Retry** and **Mark as
 done in integration** buttons **(2)**. The menu at the end of each row holds the rest, **Move to my Pull Request**
@@ -305,9 +317,8 @@ The first action is right: the org is missing its group. Create it in `helios-in
    Quick Find box, and click **New**
 2. **Label** `Crew Leads`, **Group Name** `Helios_Crew_Leads`, then **Save**
 
-The action definition is read from the branch you have checked out. Check out `integration` and
-pull it, from the branch name in the status bar and the Source Control panel, so Mariia's actions
-file is there.
+The action definition is read from the branch you have checked out, which is why step 10 had you
+check out `integration` and pull it. If you switched branch since, come back to it.
 
 Back in the **Deployment Actions** tab, click **Retry** on the row of **Put the delivery managers in
 the Crew Leads group**. The command runs in VS Code, against `helios-integration`:
@@ -394,7 +405,10 @@ The last action adds the deployment user to Crew Leads. Retrying it would work, 
 twenty seconds, so do it by hand, the way a release manager does when a release cannot wait:
 
 1. In `helios-integration`, **Setup** > **Public Groups** > **Crew Leads** > **Edit**
-2. Add your user to **Selected Members**, then **Save**
+2. Look at **Selected Members**. Your user is already there: the first action, which you ran again
+   in step 11, put every delivery manager in the group, and you are one. There is nothing to add,
+   so click **Cancel**. On a real project the deployment user is a technical user that no other
+   action adds: you would move it to **Selected Members** here, then **Save**
 
 Then, in the **Deployment Actions** tab, open the menu of **Add the deployment user to the Crew
 Leads group** and click **Mark as done in integration**. Nothing opens: sfdx-hardis records it in the background
@@ -404,7 +418,7 @@ comments. The button reads **Marking as done...** until the action shows **Done*
 The next deployment to `integration` skips it. In `uat` and beyond it still runs, because nobody
 did it there.
 
-Ticking its checkbox in the **Failed actions** list of the Pull Request comment does the same,
+Ticking its checkbox in the **Needs you** list of the Deployment Actions comment does the same,
 recorded by the next sfdx-hardis job: use it when you are on GitHub rather than in VS Code.
 
 <details markdown="1"><summary>Under the hood: what the three ways out leave behind</summary>

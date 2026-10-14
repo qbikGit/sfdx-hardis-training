@@ -3,7 +3,7 @@
   "version": 1,
   "course": {
     "name": "Salesforce DevOps with sfdx-hardis",
-    "site": "https://sfdx-hardis-training.github.io",
+    "site": "https://sfdx-hardis-training.cloudity.com",
     "upstreamRepo": "hardisgroupcom/sfdx-hardis-training",
     "docSite": "https://sfdx-hardis.cloudity.com",
     "trailheadOwner": "nvuillamy"
@@ -220,6 +220,21 @@
       "acceptance": ["The permission is granted to managers"],
       "branch": "training/mate-us-019-quote-pdf",
       "metadata": ["Helios_Delivery_Manager"]
+    },
+    {
+      "id": "US-050",
+      "level": 3,
+      "lab": 1,
+      "author": "you",
+      "title": "Configure the pipeline up to production",
+      "story": "As the release manager, I want the pipeline to go through preprod to production, with both orgs authenticated by JWT, so that every release reaches production the same way.",
+      "acceptance": [
+        "preprod and main each name their org in their branch configuration",
+        "preprod and main authenticate with an External Client App and JWT",
+        "Contributors can start a hotfix from preprod"
+      ],
+      "branch": "features/US-050-pipeline-up-to-production",
+      "metadata": ["config/.sfdx-hardis.yml", "config/branches"]
     },
     {
       "id": "US-052",
@@ -583,7 +598,7 @@
       "level": 1,
       "slug": "level-1-contributor-basics",
       "name": "Contributor basics",
-      "duration": "about 2 h",
+      "duration": "about 2 h 15",
       "prerequisite": null,
       "badge": "sfdx-hardis Contributor Basics",
       "star": "hardisgroupcom/sfdx-hardis",
@@ -717,7 +732,7 @@
       "level": 3,
       "slug": "level-3-release-manager",
       "name": "Release Manager",
-      "duration": "about 7 h 20",
+      "duration": "about 6 h 55",
       "prerequisite": 2,
       "badge": "sfdx-hardis Release Manager",
       "star": "hardisgroupcom/vscode-sfdx-hardis",
@@ -727,7 +742,7 @@
           "slug": "3-1-configure-the-pipeline-up-to-production",
           "title": "Configure the CI/CD pipeline up to production",
           "description": "Extend a two-stage Salesforce pipeline to production: branches, protections, and each org configured and authenticated with JWT by Add/Configure Org.",
-          "time": "75 min"
+          "time": "50 min"
         },
         {
           "lab": 2,
@@ -761,7 +776,7 @@
           "lab": 6,
           "slug": "3-6-release-to-production-and-read-dora-metrics",
           "title": "Release to production and read your DORA metrics",
-          "description": "Release through preprod to your production org, verify it, then measure deployment frequency, lead time and failure rate with a DORA report.",
+          "description": "Release through preprod to your production org, verify it, then read deployment frequency, lead time and failure rate in the DORA metrics panel.",
           "time": "35 min"
         },
         {

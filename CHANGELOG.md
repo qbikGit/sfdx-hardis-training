@@ -3,8 +3,153 @@
 What changed in the course, for learners and trainers. The course has no versions: each section is
 a day, newest first, and a change goes under the date of the day it is made.
 
+## 2026-10-14
+
+- Lab 3.3 quotes the deployment comment of a failed action with its new verdict, "⚠️ Deployed to integration, but an action failed after the deployment".
+- The three capstones and every badge page show the Cloudity services banner, as the home page and the Help page do.
+- Levels 2 and 3 no longer show the amber "This level is in QA" banner: the three levels are released.
+
+## 2026-10-13
+
+- The Badges page lists the holders by badge, Release Manager first, with the date and time of each award and the latest one on top.
+- The home page opens on a banner of the course and a Start button, and shows the DevOps Pipeline panel in motion before the list of levels.
+- The home page, the Help page, the last lab of each level and every badge page say who offers the course: Cloudity, and what it does on real projects, from Agentforce and Revenue Cloud to Field Service, Managed Services and DevOps.
+- Every page ends with one line about Cloudity in its footer, and each menu has a link to the Cloudity site in its language.
+- In dark mode, the label of a purple button can be read again.
+- Lab 2.2: an installation now shows its activities, so the task the flow creates can be seen on the record.
+- Lab 2.3: step 8 says when to merge the Pull Request, and how.
+- Lab 3.1: the step that configures `main` says to tick no merge target.
+- Lab 3.9: how to read a generated page as a page in VS Code.
+- Lab 3.10: the `uat` counter reads seven, then four, as on your fork, and the screenshots show the seven Pull Requests.
+- The numbered marks of about thirty screenshots, in all three levels, are back on the button, field or line the step names, and no longer hide part of it.
+- The Level 1 training menu is shown with its seven commands, **Update my course** included.
+- Lab 2.8: the picture of the command list shows the whole **Reset selected list of items to merge** row.
+- Lab 2.4: the data action in the pictures carries the label the lab asks you to type.
+- Lab 2.4: step 1 names the permission set, and the troubleshooting says what to do when the check of step 5 stays green on a fork updated before 2026-10-07.
+
+## 2026-10-12
+
+- The comment that awards a badge now says to wait a few minutes before opening the badge page, the time for the site to be published again.
+- Set up one of my training orgs now shows the errors of a failed deployment in its panel, and points to Lab 2.6 when the Helios Crew Profile is the cause instead of blaming the connection.
+- Lab 3.5: the title of the promotion Pull Request comes before the click on Create pull request, and the lab says the release note is a short text you write from the generated notes, not a paste of them.
+- Lab 3.7: Check your work names the lab to pick.
+- Level 3 home page: a pointer to the troubleshooting of Lab 3.1 when seeding an org stops on the Helios Crew Profile.
+- The course has its own address, <https://sfdx-hardis-training.cloudity.com>. The two addresses it had before redirect to it, so the links and badges you already shared keep working.
+- A translation is now stamped with the content of the English page it was made from, not with a commit: French pages no longer read as behind after every squash merge.
+- A lab or a level shows the time learners took once three of them went through it. Under that it keeps its estimate.
+- A Pull Request opened on the course repository by mistake, instead of in your fork, is now closed at once with a comment saying where it belongs and how to open it there.
+- Lab 1.6: what to do when the My Pull Request card still says the Pull Request does not exist, and a warning about the yellow GitHub banner that opens a Pull Request on the original repository instead of your fork.
+- Lab 3.8 says what monitoring gives you (a metadata backup, which is not a data backup, indicators and alerts) and where each one is read. You now receive a real alert by email from the first run, and the lab says that a real project sends them to Slack, Microsoft Teams or Google Chat.
+- Lab 3.8: new troubleshooting entry for an email that does not arrive.
+- Labs 1.3 and 1.4 no longer tell you to look for `helios-dev` in the Status section, which shows a username and never an alias: compare it with the `helios-dev` row of Orgs Manager.
+- Lab 1.5 says Save / Publish adds one commit of its own on this story, not two.
+- Lab 1.7 mentions the Trailblazer username that Claim my badge asks for.
+- The VS Code pictures were taken again on sfdx-hardis 8.17.0.
+- Check my work no longer counts Lab 2.8 as done before you start it: it now looks for the layout change of the story in `integration`, and the lab tells you to open, then merge, its Pull Request.
+- Lab 2.1 no longer says Signed Off By sits under Crew Notes on the record, a field you cannot see yourself.
+- Lab 2.2 says how to clear the Visible column before ticking System Administrator.
+- Lab 2.5 says where to paste each block of Apex, and that the fixed method replaces the first one.
+- Lab 2.6: the Setup path of step 5 was cut in two on the site.
+- Lab 2.7 mentions the two files of your teammate that wait under Staged Changes during the merge.
+- Lab 2.9 mentions the Trailblazer username that Claim my badge asks for.
+- Lab 2.8: the first pill of the command list picture no longer covers the row above it.
+- Level 3 could not start for a learner coming from Level 2: the Helios Crew profile published in Lab 2.6 named page layouts and tabs that the two Developer Edition orgs do not have. New scratch orgs no longer have Field Service and the Thanks badges, and Set up my training environment switches both off in the scratch orgs you already have.
+- Set up my training environment and Set up one of my training orgs set the language of your user to English in the Developer Edition orgs, so Salesforce names page layouts the same way in every org.
+- Lab 2.6: new troubleshooting entry for a Profile refused with `no Layout named` or `no CustomTab named`: how to find which org differs, and what to change.
+- Your fork now deletes a branch once its Pull Request is merged, so Labs 1.6 and 3.2 no longer ask you to. The major branches stay: a protected branch cannot be deleted.
+- Lab 2.4 retrieves the All list view of Crew Capacity with the object, so the tab lists the 12 records in every org.
+- Check my work no longer counts Lab 3.4 as done before Level 3 starts: it now also looks for the Pull Request of US-020 in your fork.
+- Lab 3.1: new troubleshooting entry for the Confirm access page GitHub shows before saving a branch rule or a secret.
+- Lab 3.3 no longer asks you to add your user to the Crew Leads group: the first action already put you there, and the step says so.
+- Lab 3.3 has you check out `integration`, pull it and click Refresh before you open the Deployment Actions tab, not after: the tab reads the actions from your branch.
+- Lab 3.6 says the Pipeline flow figures it quotes are those of the picture, not yours.
+- Lab 3.8 says to squash the Pull Request of the monitoring repository setting, as its check comment asks, and names the second unsecured app a Developer Edition org lists.
+- Lab 3.9 says where the Documentation Workbench opens from, and no longer speaks of a Pull Request this course never opens.
+- Lab 3.10: the title of a folded block no longer shows a raw link, the red check is called by the name GitHub gives it, and the conflict question picture shows its four answers again.
+- Lab 3.11 mentions the Trailblazer username that Claim my badge asks for.
+- Pictures: the Deployment Actions comment of Lab 2.4 reads Retry, as the product does, and the promotion comment of Lab 3.5 shows the actions of a learner who walked Level 2.
+
+## 2026-10-11
+
+- New Statistics page on the site: how many learners start and finish each level, and the median time the labs really take next to the time they announce. Updated every week, and also readable in `STATS.md` of the repository.
+- The time a lab or a level announces on the site is now the time learners were observed to take, rounded down, with the median and the fastest time next to it. The pages are rewritten from the figures every week. A lab fewer than three learners went through keeps its estimate.
+- The Badges page says how many of each badge were awarded.
+- Check my work: the receipt of a lab keeps the time it first passed, instead of the time of the last check.
+- Lab 3.8: step 8 says that Publish my pipeline configuration opens its Pull Request itself, and a new troubleshooting entry covers the files a backup run from your computer leaves in the monitoring repository.
+- Lab 3.1: new step giving `uat` its merge target to `preprod`, without which the diagram had no arrow between them. The confirmation of the secrets is described as the Yes or No question it is.
+- Lab 2.9: the last step of the list no longer contradicts the order the three traps ask for.
+- Labs 2.3 and 2.4: new troubleshooting entry for an action kept in a draft file, which the pipeline never runs.
+- Lab 2.4: the manual step is declared for the validation and deployment jobs. Declared for the deployment job only, it never stopped the check, in this lab and again in Lab 3.5.
+- Lab 3.5: the lab says that the promotion Pull Request is yours to create, what the number on the `integration` box counts, and how to leave a story out of a promotion.
+- Labs 3.5, 3.7 and 3.8: new troubleshooting entries for a promotion check that is green with no step to do, a pipeline that shows `integration` alone, and a monitoring push GitHub refuses for a missing `workflow` permission.
+- Lab 3.4 no longer mentions the setting that moves the no-overwrite list, which almost no project uses.
+- Simulate my teammates: the hotfix of Lab 3.7 is cut from the `preprod` of your fork, even when the one on your computer is behind.
+- Lab 3.6: the DORA metrics are read in the new DORA metrics panel of VS Code, one row per org of the pipeline, then exported as a Markdown report. No default org to set any more: the numbers come from the deployment jobs and the Pull Requests on GitHub.
+- Lab 3.6: the Overview now opens on the pipeline flow, which says how long a User Story takes to reach production and where it waits. The lead time of `main` is the one of the User Stories, 5.7 days, where the release Pull Request alone read 0.1.
+- Lab 3.6: new pictures of the gear menu, the Overview, the production tab and the Export menu, showing what a pipeline that released once looks like.
+- Labs 3.5, 3.7, 3.11 and the Level 3 introduction follow the same change. Lab 3.7 says which branch the hotfix counts on.
+- Lab 3.1: the gear menu picture shows the renamed DORA metrics entry.
+
+## 2026-10-10
+
+- Lab 1.6: the Pull Request window of VS Code is also shown while the check is still running, with the time the job has been going on, and a finished job says how long it took.
+
+## 2026-10-09
+
+- Lab 1.6: after the comment on GitHub, the lab opens the Pull Request window of VS Code, with the same comment and the Files button that lists the reports of the check.
+- Lab 3.2: the list of the components of a Pull Request is opened from its window in VS Code, with the Files button, instead of from the job page on GitHub.
+
+## 2026-10-08
+
+- The labs follow the latest Pull Request comments: no Flows row, the deployment mode in the Metadata row, and a How to merge line on a green check.
+- Every VS Code screenshot taken again on the current extension, and the Level 1 GitHub screenshots taken from a real walk with the new Pull Request comments.
+- Lab 1.4: the Salesforce Setup screenshots show the new Setup look, and the record picture shows an installation with two pallets.
+- Level 2 GitHub and Salesforce screenshots taken from a real walk with the new Pull Request comments: the failed check and the Flow diff of Lab 2.2, the Deployment Actions comment of Lab 2.4, Flow Builder in Labs 2.2 and 2.7, the Crew Capacity list of Lab 2.4.
+- Lab 2.2: the Add Element menu of Flow Builder gained two rows, and the pill is back on Update Triggering Record.
+- Lab 2.4: Create my lab records picks the lab and the org on its own, and the lab no longer asks you to pick them.
+- Capstones: the Star screenshots show the button again, now on the right of the repository name.
+- Level 3 GitHub and Salesforce screenshots taken from a real walk with the new Pull Request comments: branch rules and secrets of Lab 3.1, the files of Lab 3.2, the Deployment Actions comments of Lab 3.3, the promotion of Lab 3.5, the validation rule of Lab 3.7, the Run workflow menu of Lab 3.8, the promotion description and conflict comment of Lab 3.10.
+- Lab 3.1: Save / Publish does not ask the target branch, New User Story already recorded it.
+- Lab 3.2: the Metadata row counts the layout as one more component updated, not as the only one.
+- Lab 3.4: US-019 is in the Level 3 start, so Simulate my teammates answers "Nothing to commit" whatever the route.
+- Reset this level gives the Level 2 deployment actions a Pull Request of your fork, so the promotions of Level 3 run them again.
+- Lab 3.7: step 3 shows the files of the hotfix Pull Request, not those of Lab 3.2.
+- Lab 3.10: the conflict comment is quoted as it prints, and the uat window also lists the retrofit and the configuration, left unticked.
+- The French labs follow every English change of the day.
+
+## 2026-10-07
+
+- The labs read the new sfdx-hardis Pull Request comments: a verdict on top, a table of checks, then only what needs you; their screenshots will be taken again once the course runs that version.
+- Labs 1.5, 2.2 and 2.8: the Metadata Retriever screenshots show its new **Retrieve mode** list.
+- Labs 2.6 and 2.8: the Metadata Retriever now brings Profiles back whole, with only the permissions they grant, and the labs say what that changes in the file you commit.
+- Claim my badge no longer asks you to push a feature branch you squash merged and deleted on GitHub.
+- Create my lab records no longer ends on "EPERM" on Windows after creating the records, and neither do the other Training commands that deploy from a temporary folder.
+- Lab 2.1: the Backpromote panel lists four steps while it computes its plan, and the picture follows.
+- Lab 3.3: about sixty components are deployed to integration by Level 3.
+- Lab 3.5: the promotion notes count 17 tickets, the configuration story of Lab 3.1 among them.
+- The hotfix teammate of Lab 3.7 commits a message that says what the fix does.
+- The VS Code pictures taken again on sfdx-hardis 8.14, the promotion conflict question excepted: its previous picture shows every answer.
+
+## 2026-10-06
+
+- Lab 2.4: the Helios project turns on the stop of the check on a pending manual step, which sfdx-hardis no longer does by default.
+- Clean up a training org says when a step failed instead of "nothing to remove", and retries when the org's address briefly does not answer.
+- Lab 1.3: what to do when New User Story says the branch already exists.
+- Lab 1.6: the checks table names the pills the picture carries, the check comment picture shows the Simulated deployment line, and the deployment one its table of changes.
+- Level 1: the address of your fork is spelled out where a step opens it, not in every paragraph.
+- Labs 1.6 and 3.5: the comment shows the code coverage first, and its protected metadata table is opened from a collapsed section.
+- Labs 1.6 and 3.2: the Pull Request comment reads "Simulated deployment" on a check, with a table of the changes per type of component.
+- Lab 3.5: the Pull Request comment shows the remote site setting protected by package-no-overwrite.xml.
+- Lab 3.1: JWT is configured for preprod and production only, the configuration starts with a New User Story, and the second secret has its own picture.
+- Labs 3.2, 3.3, 3.5, 3.6 and 3.11: integration and uat keep their auth URL secrets, and Lab 3.6 is where the JWT keys prove themselves.
+- Reset this level also deletes the branches of that level's labs and sets up helios-dev and helios-integration again.
+- Help: a new "Start the course over" section, linked from every level.
+- Lab 2.1: what to answer when VS Code offers to merge the parent branch, and what to do when the backpromote refuses a required field.
+- Simulate my teammates commits only its own files, and merges the Pull Request after a MegaLinter formatting fix.
+
 ## 2026-10-05
 
+- Lab 3.8: the first monitoring run is green even with findings, and the lab says where to read them.
 - A badge claim is answered once: the audit no longer posts the same comment twice on the issue.
 - Lab 1.1: the Git installer options are named as the installer shows them, each installer is named where the lab talks about it, and the pill of the Extensions icon sits on that icon.
 - Lab 1.2: a note says what a connected org and the default org are, and the Agentforce Vibes tip opens the GitHub CLI step instead of closing it.
